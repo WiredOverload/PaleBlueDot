@@ -68,11 +68,12 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
     });
 }
 
-export function controlSystem(ents: Entity[]) {//ents: Readonly<Entity>[]){
+export function controlSystem(ents: Entity[], camera: THREE.Camera) {
     ents.forEach(ent => {
         if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
             if (ent.control.left) {
                 ent.vel.left = true;
+                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI/32);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
@@ -81,6 +82,7 @@ export function controlSystem(ents: Entity[]) {//ents: Readonly<Entity>[]){
             }
             if (ent.control.right) {
                 ent.vel.right = true;
+                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }

@@ -38,9 +38,9 @@ export class GameState implements State {
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(){
+    public update(camera: THREE.Camera) {
         // pull in all system free functions and call each in the proper order
-        controlSystem(this.entities);
+        controlSystem(this.entities, camera);
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);

@@ -13,7 +13,7 @@ export interface State {
      */
     entities: Entity[];
 
-    update();
+    update(camera: THREE.Camera);
     
     render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene);
 
