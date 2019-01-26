@@ -48,7 +48,7 @@ function main(canvasContainer: HTMLElement) {
 
     // set up scene
     let scene = new THREE.Scene();
-    scene.background = new THREE.Color("#FFFFFF");
+    scene.background = new THREE.Color("#000000");
 
     // set up camera 
     // var camera = new THREE.PerspectiveCamera(75, 1280 / 720, 0.1, 1000);
@@ -84,7 +84,7 @@ function main(canvasContainer: HTMLElement) {
         // log FPS
         // fpsWidget.setText("FPS: " + Math.round(fps));
         // BoardhouseUI.ReconcilePixiDom(fpsWidget, app.stage);
-    }, 1000/16);
+    }, 1000/60);
 
     // render update loop
     function renderLoop(timeStamp: number) {
