@@ -22,11 +22,11 @@ export function velocitySystem(ents: Readonly<Entity>[]) : void {
             }
 
             if (ent.vel.up) {
-                ent.pos.y -= ent.vel.speed;
+                ent.pos.y += ent.vel.speed;
             }
 
             if (ent.vel.down) {
-                ent.pos.y += ent.vel.speed;
+                ent.pos.y -= ent.vel.speed;
             }
         }
     });
@@ -53,13 +53,19 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
             ents.forEach(hurtingEnt => {
                 if (hurtingEnt.hurtBox !== undefined && hurtingEnt.pos !== undefined) {
                     if (hittingEnt.hitBox.collidesWith.indexOf(hurtingEnt.hurtBox.type) > -1) {
-                        if (hittingEnt.pos.x < hurtingEnt.pos.x + hurtingEnt.hurtBox.width &&
-                            hittingEnt.pos.x + hittingEnt.hitBox.width > hurtingEnt.pos.x &&
-                            hittingEnt.pos.y < hurtingEnt.pos.y + hurtingEnt.hurtBox.height &&
-                            hittingEnt.hitBox.height + hittingEnt.pos.y > hurtingEnt.pos.y)
+
+                        if (hittingEnt.pos.x + hittingEnt.hitBox.width/2 < hurtingEnt.pos.x + hurtingEnt.hurtBox.width &&
+                            hittingEnt.pos.x + hittingEnt.hitBox.width + hittingEnt.hitBox.width/2 > hurtingEnt.pos.x &&
+                            hittingEnt.pos.y + hittingEnt.hitBox.height/2 < hurtingEnt.pos.y + hurtingEnt.hurtBox.height &&
+                            hittingEnt.pos.y + hittingEnt.hitBox.height + hittingEnt.hitBox.height/2 > hurtingEnt.pos.y)
                         {
-                            hittingEnt.hitBox.onHit();
-                            hurtingEnt.hurtBox.onHurt();
+                            if (hittingEnt.hitBox.onHit !== undefined) {
+                                hittingEnt.hitBox.onHit();
+                            }
+
+                            if (hurtingEnt.hurtBox.onHurt !== undefined) {
+                                hurtingEnt.hurtBox.onHurt();
+                            }
                         }
                     }
                 }
@@ -73,7 +79,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
         if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
             if (ent.control.left) {
                 ent.vel.left = true;
-                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI/32);
+                // camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI/32);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
@@ -82,12 +88,25 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
             }
             if (ent.control.right) {
                 ent.vel.right = true;
-                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
+                // camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
             else {
                 ent.vel.right = false;
+            }
+            if (ent.control.up) {
+                ent.vel.up = true;
+            }
+            else {
+                ent.vel.up = false;
+            }
+
+            if (ent.control.down) {
+                ent.vel.down = true;
+            }
+            else {
+                ent.vel.down = false;
             }
             // test attack
             if (ent.control.attack && !ent.control.attacked) {

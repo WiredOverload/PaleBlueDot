@@ -32,6 +32,8 @@ export interface ControllableComponent {
     attacked: boolean;
     left: boolean;
     right: boolean;
+    up: boolean;
+    down: boolean;
 }
 
 /**
@@ -43,7 +45,7 @@ export interface HitBoxComponent {
     collidesWith: HurtTypes[];
     height: number;
     width: number;
-    onHit: () => void;
+    onHit?: () => void;
 }
 
 /**
@@ -98,6 +100,8 @@ export function initializeControls(): ControllableComponent {
         attacked: false,
         left: false,
         right: false,
+        up: false,
+        down: false,
     };
 }
 
@@ -143,4 +147,20 @@ export function initializeHurtBox(entMesh: THREE.Mesh, hurtType: HurtTypes, offS
     }
 
     return hurtBox;
+}
+
+export function initializeHitBox(entMesh: THREE.Mesh, collidesWith: HurtTypes[], offSetX: number = 0, offSetY: number = 0, manualHeight?: number, manualWidth?: number) : HitBoxComponent {
+    let hitBox: HitBoxComponent = { collidesWith: collidesWith, height: 0, width: 0 };
+
+    if (manualHeight !== undefined && manualWidth !== undefined) {
+        hitBox.height = manualHeight - offSetY;
+        hitBox.width = manualWidth + offSetX;
+    }
+    else {
+        const boundingBox = new THREE.Box3().setFromObject(entMesh);
+        hitBox.height = boundingBox.max.y - boundingBox.min.y - offSetY;
+        hitBox.width =  boundingBox.max.x - boundingBox.min.x + offSetX;
+    }
+
+    return hitBox;
 }

@@ -10,8 +10,8 @@ import {
     animationSystem, 
     velocitySystem 
 } from "./coresystems";
-import { setSprite, setHurtBoxGraphic } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox } from "./corecomponents";
+import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox, initializeHitBox } from "./corecomponents";
 import { playerAnim } from "../data/animations/player";
 import { SequenceTypes } from "./animationschema";
 
@@ -33,8 +33,16 @@ export class GameState implements State {
         player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         setHurtBoxGraphic(player.sprite, player.hurtBox);
+
+        let enemy = new Entity();
+        enemy.pos = { x: 200, y: -100, z: 4 };
+        enemy.sprite = setSprite("../data/textures/cottage.png", scene, 4);
+        enemy.hitBox = initializeHitBox(enemy.sprite, [HurtTypes.test]);
+        enemy.hitBox.onHit = () => { console.log("ouch!"); };
+        setHitBoxGraphic(enemy.sprite, enemy.hitBox);
         
         this.entities.push(player);
+        this.entities.push(enemy);
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
