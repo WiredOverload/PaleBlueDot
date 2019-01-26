@@ -10,8 +10,8 @@ import {
     animationSystem, 
     velocitySystem 
 } from "./coresystems";
-import { setSprite, setHurtBoxGraphic } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox } from "./corecomponents";
+import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox, initializeHitBox } from "./corecomponents";
 import { playerAnim } from "../data/animations/player";
 import { SequenceTypes } from "./animationschema";
 
@@ -33,13 +33,12 @@ export class GameState implements State {
         player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         setHurtBoxGraphic(player.sprite, player.hurtBox);
-        
-        this.entities.push(player);
 
         let background = new Entity();
         background.pos = {x: 0, y: 0, z: 0, angle: 0};
         background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
         //add componant to render multiple times / teleport to wrap
+        this.entities.push(player);
         this.entities.push(background);
 
         // this.rootWidget = new BoardhouseUI.Widget();

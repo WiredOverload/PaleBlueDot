@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Resources } from "./resourcemanager";
-import { AnimationComponent, HurtBoxComponent } from "./corecomponents";
+import { AnimationComponent, HurtBoxComponent, HitBoxComponent } from "./corecomponents";
 import { SequenceTypes } from "./animationschema";
 
 /**
@@ -46,6 +46,19 @@ export function setHurtBoxGraphic(entMesh: THREE.Mesh, entHurtBox: HurtBoxCompon
     const hurtBoxMaterial = new THREE.MeshBasicMaterial({ color: "#DC143C" });
     const hurtBoxMesh = new THREE.Mesh(hurtBoxGeometry, hurtBoxMaterial);
     entMesh.add(hurtBoxMesh);
+}
+
+/**
+ * Helper to set visuals for a hitBox.
+ * Used for testing hit collision assumptions.
+ * @param entMesh
+ * @param entHurtBox
+ */
+export function setHitBoxGraphic(entMesh: THREE.Mesh, entHitBox: HitBoxComponent) : void {
+    const hitBoxGeometry = new THREE.PlaneGeometry(entHitBox.width, entHitBox.height);
+    const hitBoxMaterial = new THREE.MeshBasicMaterial({ color: "#860111" });
+    const hitBoxMesh = new THREE.Mesh(hitBoxGeometry, hitBoxMaterial);
+    entMesh.add(hitBoxMesh);
 }
 
 /**
