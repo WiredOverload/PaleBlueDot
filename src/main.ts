@@ -84,7 +84,7 @@ function main(canvasContainer: HTMLElement) {
         // log FPS
         // fpsWidget.setText("FPS: " + Math.round(fps));
         // BoardhouseUI.ReconcilePixiDom(fpsWidget, app.stage);
-    }, 16);
+    }, 1000/16);
 
     // render update loop
     function renderLoop(timeStamp: number) {
