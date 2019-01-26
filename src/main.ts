@@ -25,6 +25,7 @@ loadTextures([
     "../data/textures/girl.png",
     "../data/textures/msknight.png",
     "../data/textures/snow.png",
+    "../data/textures/space4096.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;

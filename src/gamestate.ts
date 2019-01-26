@@ -26,15 +26,22 @@ export class GameState implements State {
         this.entities = [];
         // set up entities
         let player = new Entity();
-        player.pos = { x: -100, y: -100, z: 5 };
+        player.pos = { x: -100, y: -100, z: 5 , angle: 0};
         player.sprite = setSprite("../data/textures/msknight.png", scene, 4);
         player.control = initializeControls();
-        player.vel = { left: false, right: false, up: false, down: false, speed: 2 };
+        player.vel = { xVelocity: 0, yVelocity: 0, rotationVelocity: 0 };
         player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         setHurtBoxGraphic(player.sprite, player.hurtBox);
         
         this.entities.push(player);
+
+        let background = new Entity();
+        background.pos = {x: 0, y: 0, z: 0, angle: 0};
+        background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
+        //add componant to render multiple times / teleport to wrap
+        this.entities.push(background);
+
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 

@@ -13,21 +13,9 @@ import { SequenceTypes } from "./animationschema";
 export function velocitySystem(ents: Readonly<Entity>[]) : void {
     ents.forEach(ent => { 
         if (ent.vel !== undefined && ent.pos !== undefined) {
-            if (ent.vel.left) {
-                ent.pos.x -= ent.vel.speed;
-            }
-
-            if (ent.vel.right) {
-                ent.pos.x += ent.vel.speed;
-            }
-
-            if (ent.vel.up) {
-                ent.pos.y -= ent.vel.speed;
-            }
-
-            if (ent.vel.down) {
-                ent.pos.y += ent.vel.speed;
-            }
+            ent.pos.x += ent.vel.xVelocity;
+            ent.pos.y += ent.vel.yVelocity;
+            ent.pos.angle += ent.vel.rotationVelocity;
         }
     });
 }
@@ -72,46 +60,33 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
     ents.forEach(ent => {
         if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
             if (ent.control.left) {
-                ent.vel.left = true;
-                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), -Math.PI/32);
+                ent.vel.rotationVelocity += Math.PI/32;
+                camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
-            else {
-                ent.vel.left = false;
-            }
-            if (ent.control.right) {
-                ent.vel.right = true;
-                camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
+            else if (ent.control.right) {
+                //ent.vel.xVelocity += .05;
+                ent.vel.rotationVelocity -= Math.PI/32;
+                camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
-            else {
-                ent.vel.right = false;
-            }
-            // test attack
-            if (ent.control.attack && !ent.control.attacked) {
-                ent.control.attacked = true;
-                let attack = new Entity();
-                attack.timer = { ticks: 15 };
-                attack.pos = {x: ent.pos.x + 100, y: ent.pos.y + 50, z: 5};
-                // attack.graphic = setHitBoxGraphic(stage, 50, 50);
-                attack.hitBox = { 
-                    collidesWith: [HurtTypes.test], 
-                    height: 50, 
-                    width: 50, 
-                    onHit: function() { console.log("hit")
-                }};
-                ents.push(attack);
-            }
 
-            if (ent.control.attacked) {
-                ent.control.attackTimer++;
+            if (ent.control.up) {
+                ent.vel.xVelocity += Math.cos(ent.pos.angle) * 1;
+                ent.vel.yVelocity += Math.sin(ent.pos.angle) * 1;
+                //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
+                // test change seq
+                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
-
-            if (ent.control.attackTimer > 75) {
-                ent.control.attacked = false;
-                ent.control.attackTimer = 0;
+            else if (ent.control.down) {
+                ent.vel.xVelocity -= Math.cos(ent.pos.angle) * 1;
+                ent.vel.yVelocity -= Math.sin(ent.pos.angle) * 1;
+                //ent.vel.rotationVelocity += 1;
+                //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
+                // test change seq
+                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
         }
     });

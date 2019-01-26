@@ -8,6 +8,7 @@ export interface PositionComponent {
     x: number;
     y: number;
     z: number;
+    angle: number;
 }
 
 /**
@@ -15,21 +16,17 @@ export interface PositionComponent {
  * angle and magnitude later on
  */
 export interface VelocityComponent {
-    left: boolean;
-    right: boolean;
-    up: boolean;
-    down: boolean;
-    speed: number;
+    xVelocity: number;
+    yVelocity: number;
+    rotationVelocity: number;
 }
 
 /**
  * Controllable component.
  */
 export interface ControllableComponent {
-    jump: boolean;
-    attack: boolean;
-    attackTimer: number;
-    attacked: boolean;
+    up: boolean;
+    down: boolean;
     left: boolean;
     right: boolean;
 }
@@ -92,10 +89,8 @@ export enum HurtTypes {
  */
 export function initializeControls(): ControllableComponent {
     return {
-        jump: false,
-        attack: false,
-        attackTimer: 0,
-        attacked: false,
+        up: false,
+        down: false,
         left: false,
         right: false,
     };
