@@ -27,19 +27,22 @@ export class Resources
 
 export async function loadTextures(urls: string[]) : Promise<UrlToTextureMap> {
     const loader = new THREE.TextureLoader();
-    let cachedTextures: UrlToTextureMap = {};
 
-    return new Promise((resolve: (value: UrlToTextureMap) => void, reject) => {
-        for (let i = 0; i < urls.length; i++) {
-            let texture = loader.load(urls[i], function(tex) {
-                if (i === (urls.length - 1)) {
-                    resolve(cachedTextures);
-                }
-            });
+    const promises = urls.map((url) =>
+        new Promise<THREE.Texture>((resolve) => {
+            loader.load(url, (tex) => resolve(tex));
+        })
+    );
 
-            cachedTextures[urls[i]] = texture;
-        }
+    const textures = await Promise.all(promises);
+
+    const cachedTextures: UrlToTextureMap = {};
+    
+    textures.forEach((tex, i) => {
+        cachedTextures[urls[i]] = tex
     });
+
+    return cachedTextures;
 }
 
 export interface UrlToTextureMap {
