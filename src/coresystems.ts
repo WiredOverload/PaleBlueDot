@@ -105,6 +105,8 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
             if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
                 ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
             }
+
+            ent.vel.rotational.z *= 0.95;
         }
     });
 }
