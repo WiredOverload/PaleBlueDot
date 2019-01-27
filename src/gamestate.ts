@@ -16,7 +16,7 @@ import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
-import { Vector3, Euler, Camera } from "three";
+import { Vector3, Euler, Camera, Mesh, Scene } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
@@ -32,6 +32,9 @@ export class GameState implements State {
     public player: Entity;
 
     public camera: Camera;
+    private ui_scene: Scene;
+    private ui_camera: Camera;
+    private beacon_icons: Mesh[];
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -155,6 +158,11 @@ export class GameState implements State {
         this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
         scene.add(this.camera);
          // this.rootWidget = new BoardhouseUI.Widget();
+        
+        this.ui_scene = new Scene();
+        this.ui_camera = new THREE.OrthographicCamera(0, 1280, 720, 0, -1000, 1000);
+
+        const widget = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
     }
 
     public update(stateStack: State[]) {
@@ -173,8 +181,10 @@ export class GameState implements State {
     public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
+        renderer.autoClear = false;
         renderer.clear();
         renderer.render(this.scene, this.camera);
+        renderer.render(this.ui_scene, this.ui_camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }
