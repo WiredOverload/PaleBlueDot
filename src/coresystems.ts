@@ -57,19 +57,19 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
 }
 
 export function controlSystem(ents: Entity[], camera: THREE.Camera) {
-    const rotAccel = 0.001;
+    const rotAccel = 0.0001;
 
     ents.forEach(ent => {
         if (ent.control && ent.vel && ent.pos) {
+            camera.position.copy(ent.pos.location);
+            camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
+
             if (ent.control.left) {
                 ent.vel.rotational.z += rotAccel;
-                camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), new Vector3(1, 0, 0).angleTo(ent.pos.direction));
-                // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
             else if (ent.control.right) {
                 ent.vel.rotational.z -= rotAccel;
-                camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), new Vector3(1, 0, 0).angleTo(ent.pos.direction));
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
 
@@ -90,6 +90,7 @@ export function positionSystem(ents: Readonly<Entity>[]) {
         ents.forEach(ent => {
             if (ent.sprite && ent.pos) {
                 ent.sprite.position.copy(ent.pos.location);
+                ent.sprite.rotation.set(0, 0, Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
             }
         });
     }
