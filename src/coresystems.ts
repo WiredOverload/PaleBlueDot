@@ -5,6 +5,7 @@ import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
 import { changeSequence } from "./helpers";
 import { SequenceTypes } from "./animationschema";
+import { Quaternion, Vector3, Euler } from "three";
 
 /**
  * Rudimentary velocity implementation... will replace directions with
@@ -12,17 +13,16 @@ import { SequenceTypes } from "./animationschema";
  */
 export function velocitySystem(ents: Readonly<Entity>[]) : void {
     ents.forEach(ent => { 
-        if (ent.vel !== undefined && ent.pos !== undefined) {
-            ent.pos.x += ent.vel.xVelocity;
-            ent.pos.y += ent.vel.yVelocity;
-            ent.pos.angle += ent.vel.rotationVelocity;
+        if (ent.vel && ent.pos) {
+            ent.pos.location.add(ent.vel.positional);
+            ent.pos.direction.applyEuler(ent.vel.rotational);
         }
     });
 }
 
 export function animationSystem(ents: Readonly<Entity>[]) : void {
     ents.forEach(ent => {
-        if (ent.anim !== undefined && ent.sprite !== undefined) {
+        if (ent.anim && ent.sprite) {
             ent.anim.ticks--;
             if (ent.anim.ticks <= 0) {
                 ent.anim.frame = ent.anim.blob[ent.anim.sequence][ent.anim.frame].nextFrame;
@@ -37,14 +37,14 @@ export function animationSystem(ents: Readonly<Entity>[]) : void {
 
 export function collisionSystem(ents: Readonly<Entity>[]) {
     ents.forEach(hittingEnt => {
-        if (hittingEnt.hitBox !== undefined && hittingEnt.pos !== undefined) {
+        if (hittingEnt.hitBox && hittingEnt.pos) {
             ents.forEach(hurtingEnt => {
-                if (hurtingEnt.hurtBox !== undefined && hurtingEnt.pos !== undefined) {
+                if (hurtingEnt.hurtBox && hurtingEnt.pos) {
                     if (hittingEnt.hitBox.collidesWith.indexOf(hurtingEnt.hurtBox.type) > -1) {
-                        if (hittingEnt.pos.x < hurtingEnt.pos.x + hurtingEnt.hurtBox.width &&
-                            hittingEnt.pos.x + hittingEnt.hitBox.width > hurtingEnt.pos.x &&
-                            hittingEnt.pos.y < hurtingEnt.pos.y + hurtingEnt.hurtBox.height &&
-                            hittingEnt.hitBox.height + hittingEnt.pos.y > hurtingEnt.pos.y)
+                        if (hittingEnt.pos.location.x < hurtingEnt.pos.location.x + hurtingEnt.hurtBox.width &&
+                            hittingEnt.pos.location.x + hittingEnt.hitBox.width > hurtingEnt.pos.location.x &&
+                            hittingEnt.pos.location.y < hurtingEnt.pos.location.y + hurtingEnt.hurtBox.height &&
+                            hittingEnt.hitBox.height + hittingEnt.pos.location.y > hurtingEnt.pos.location.y)
                         {
                             hittingEnt.hitBox.onHit();
                             hurtingEnt.hurtBox.onHurt();
@@ -57,35 +57,28 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
 }
 
 export function controlSystem(ents: Entity[], camera: THREE.Camera) {
+    const rotAccel = 0.001;
+
     ents.forEach(ent => {
-        if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
+        if (ent.control && ent.vel && ent.pos) {
             if (ent.control.left) {
-                ent.vel.rotationVelocity += Math.PI/32;
-                camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
+                ent.vel.rotational.z += rotAccel;
+                camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), new Vector3(1, 0, 0).angleTo(ent.pos.direction));
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
             else if (ent.control.right) {
-                //ent.vel.xVelocity += .05;
-                ent.vel.rotationVelocity -= Math.PI/32;
-                camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
-                // test change seq
+                ent.vel.rotational.z -= rotAccel;
+                camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), new Vector3(1, 0, 0).angleTo(ent.pos.direction));
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
 
             if (ent.control.up) {
-                ent.vel.xVelocity += Math.cos(ent.pos.angle) * 1;
-                ent.vel.yVelocity += Math.sin(ent.pos.angle) * 1;
-                //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
-                // test change seq
+                ent.vel.positional.add(ent.pos.direction);
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
             else if (ent.control.down) {
-                ent.vel.xVelocity -= Math.cos(ent.pos.angle) * 1;
-                ent.vel.yVelocity -= Math.sin(ent.pos.angle) * 1;
-                //ent.vel.rotationVelocity += 1;
-                //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
-                // test change seq
+                ent.vel.positional.add(new Vector3().copy(ent.pos.direction).multiplyScalar(-1));
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
         }
@@ -95,8 +88,8 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
 export function positionSystem(ents: Readonly<Entity>[]) {
     for (let i = 0; i < ents.length; i++) {
         ents.forEach(ent => {
-            if (ent.sprite !== undefined && ent.pos !== undefined) {
-                ent.sprite.position.set(ent.pos.x, ent.pos.y, ent.pos.z); 
+            if (ent.sprite && ent.pos) {
+                ent.sprite.position.copy(ent.pos.location);
             }
         });
     }
@@ -104,7 +97,7 @@ export function positionSystem(ents: Readonly<Entity>[]) {
 
 export function timerSystem(ents: Entity[]) {
     ents.forEach(ent => {
-        if (ent.timer !== undefined) {
+        if (ent.timer) {
             ent.timer.ticks--;
 
             if (ent.timer.ticks <= 0) {
@@ -112,12 +105,12 @@ export function timerSystem(ents: Entity[]) {
                 ents.splice(ents.indexOf(ent), 1);
 
                 // // destroy sprite if ent has one
-                // if (ent.sprite !== undefined) {
+                // if (ent.sprite) {
                 //     ent.sprite.destroy();
                 // }
 
                 // // destroy graphic if ent has one
-                // if (ent.graphic !== undefined) {
+                // if (ent.graphic) {
                 //     ent.graphic.destroy();
                 // }
             }
