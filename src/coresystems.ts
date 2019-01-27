@@ -78,6 +78,14 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
                 ent.vel.rotational.z -= rotAccel;
             }
 
+            if (ent.control.strafeleft) {
+                ent.vel.positional.add(ent.pos.direction.clone().multiplyScalar(-posAccel));
+            }
+            
+            if (ent.control.straferight) {
+                ent.vel.positional.add(ent.pos.direction.clone().multiplyScalar(posAccel));
+            }
+
             if (ent.control.up) {
                 ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
                 ent.anim = changeSequence(SequenceTypes.move, ent.anim);
