@@ -48,11 +48,11 @@ export class GameState implements State {
 
     public update(camera: THREE.Camera) {
         // pull in all system free functions and call each in the proper order
-        controlSystem(this.entities, camera);
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities);
+        controlSystem(this.entities, camera);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene) {
