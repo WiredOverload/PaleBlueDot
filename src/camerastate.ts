@@ -11,6 +11,7 @@ import {
     velocitySystem 
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
+import { Vector3 } from "three";
 
 
 
@@ -26,7 +27,7 @@ export class CameraState implements State {
         this.scene = scene;
 
         let background = new Entity();
-        background.pos = {x: 0, y: 0, z: 10, angle: 0};
+        background.pos = {location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
         background.sprite = setSprite("../data/textures/cottage.png", scene, 2);
         //add componant to render multiple times / teleport to wrap
         this.entities.push(background);

@@ -5,10 +5,8 @@ import { SequenceTypes, AnimationSchema } from "./animationschema";
  * Position component.
  */
 export interface PositionComponent {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
+    location: THREE.Vector3;
+    direction: THREE.Vector3;
 }
 
 /**
@@ -16,9 +14,8 @@ export interface PositionComponent {
  * angle and magnitude later on
  */
 export interface VelocityComponent {
-    xVelocity: number;
-    yVelocity: number;
-    rotationVelocity: number;
+    positional: THREE.Vector3;
+    rotational: THREE.Euler;
 }
 
 /**
@@ -30,6 +27,8 @@ export interface ControllableComponent {
     left: boolean;
     right: boolean;
     camera: boolean;
+    strafeleft: boolean;
+    straferight: boolean;
 }
 
 /**
@@ -41,7 +40,7 @@ export interface HitBoxComponent {
     collidesWith: HurtTypes[];
     height: number;
     width: number;
-    onHit: () => void;
+    onHit?: () => void;
 }
 
 /**
@@ -94,7 +93,9 @@ export function initializeControls(): ControllableComponent {
         down: false,
         left: false,
         right: false,
-        camera: false
+        camera: false,
+        strafeleft: false,
+        straferight: false,
     };
 }
 
@@ -140,4 +141,20 @@ export function initializeHurtBox(entMesh: THREE.Mesh, hurtType: HurtTypes, offS
     }
 
     return hurtBox;
+}
+
+export function initializeHitBox(entMesh: THREE.Mesh, collidesWith: HurtTypes[], offSetX: number = 0, offSetY: number = 0, manualHeight?: number, manualWidth?: number) : HitBoxComponent {
+    let hitBox: HitBoxComponent = { collidesWith: collidesWith, height: 0, width: 0 };
+
+    if (manualHeight !== undefined && manualWidth !== undefined) {
+        hitBox.height = manualHeight - offSetY;
+        hitBox.width = manualWidth + offSetX;
+    }
+    else {
+        const boundingBox = new THREE.Box3().setFromObject(entMesh);
+        hitBox.height = boundingBox.max.y - boundingBox.min.y - offSetY;
+        hitBox.width =  boundingBox.max.x - boundingBox.min.x + offSetX;
+    }
+
+    return hitBox;
 }

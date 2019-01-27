@@ -59,6 +59,23 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
                 }
             });
         }
+
+        if (e.key === 'a') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.strafeleft = true;
+                }
+            });
+        }
+
+        console.log("key:", e);
+        if (e.key === 'd') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.straferight = true;
+                }
+            });
+        }
     }
 
     window.onkeyup = function(e) {
@@ -107,6 +124,21 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
                     else {
                         ent.control.camera = true;
                     }
+                }
+            });
+        }
+        if (e.key === 'a') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.strafeleft = false;
+                }
+            });
+        }
+
+        if (e.key === 'd') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.straferight = false;
                 }
             });
         }
