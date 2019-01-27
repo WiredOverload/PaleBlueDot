@@ -21,6 +21,7 @@ import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
 import { cleanUpAsteroidsSystem } from "./cleanupasteroidssystem";
+import { resourceDrainSystem } from "./resourcedrainsystem";
 
 
 /**
@@ -62,7 +63,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.blue += 100;
+                    hittingEnt.resources.blue += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("blue: " + hittingEnt.resources.blue);
                 }
@@ -73,7 +74,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.red += 100;
+                    hittingEnt.resources.red += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("red: " + hittingEnt.resources.red);
                 }
@@ -84,7 +85,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.green += 100;
+                    hittingEnt.resources.green += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("green: " + hittingEnt.resources.green);
                 }
@@ -155,7 +156,7 @@ export class GameState implements State {
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
         earth.hurtBox = initializeHurtBox(earth.sprite, HurtTypes.earth, 0, 0, 85, 85);
-        earth.resources = {blue: 1000, red: 1000, green: 1000, fuel: 0, beacons: 0};
+        earth.resources = {blue: 1500, red: 1500, green: 1500, fuel: 0, beacons: 0};
         earth.hurtBox.onHurt = function(hurtingEnt: Entity, hittingEnt: Entity) {
             if (hittingEnt.resources) {
                 if (Math.abs(0 - Math.abs(hittingEnt.vel.positional.x)) <= .25 &&
@@ -171,6 +172,8 @@ export class GameState implements State {
                 }
             }
         }
+        
+        this.earth = earth;
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
@@ -217,6 +220,7 @@ export class GameState implements State {
         controlSystem(this.entities, this.camera, stateStack);
         tiledSpriteSystem(this.entities, this.camera);
         deathCheckSystem(this.player, this.onDeath);
+        resourceDrainSystem(this.earth, this.onDeath);
         cleanUpAsteroidsSystem(this.entities, this.camera, this.scene);
     }
 
