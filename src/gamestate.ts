@@ -16,7 +16,7 @@ import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
-import { Vector3, Euler } from "three";
+import { Vector3, Euler, Camera } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
@@ -30,6 +30,8 @@ export class GameState implements State {
     public scene: THREE.Scene;
     public stateStack: State[];
     public player: Entity;
+
+    public camera: Camera;
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -90,6 +92,21 @@ export class GameState implements State {
         this.stateStack.pop();
     }
 
+    private deploy_beacon = (ent: Entity) => {
+        const beacon = new Entity();
+        const dir = ent.vel.positional.clone().normalize();
+        const x = dir.x;
+        dir.x = -dir.y;
+        dir.y = x;
+        beacon.flags |= Flag.BEACON;
+        beacon.pos = { location: ent.pos.location.clone(), direction: dir };
+        beacon.vel = { positional: ent.vel.positional.clone(), rotational: new Euler(), friction: 0.95 };
+        beacon.sprite = setSprite("../data/textures/beacon.png", this.scene, 2);
+        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
+
+        this.entities.push(beacon);
+    }
+
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene, stateStack: State[]){
         this.entities = [];
@@ -100,7 +117,7 @@ export class GameState implements State {
         this.player = player;
         player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
         player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
-        player.control = initializeControls();
+        player.control = initializeControls(this.deploy_beacon);
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
@@ -112,11 +129,6 @@ export class GameState implements State {
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
-
-        let beacon = new Entity();
-        beacon.pos = { location: new Vector3(200, 100, 3), direction: new Vector3(0, 1, 0) };
-        beacon.sprite = setSprite("../data/textures/beacon.png", scene, 2);
-        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
@@ -134,29 +146,31 @@ export class GameState implements State {
         //add component to render multiple times / teleport to wrap
         this.entities.push(player);
         this.entities.push(earth);
-        this.entities.push(beacon);
         this.entities.push(background);
+
+        this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+        scene.add(this.camera);
          // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(camera: THREE.Camera, stateStack: State[]) {
+    public update(stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities, this.scene);
-        debrisSystem(this.entities, this.scene, this.asteroidCollide, camera);
+        debrisSystem(this.entities, this.scene, this.asteroidCollide, this.camera);
         hitByHarmfulDebrisSystem(this.entities);
-        controlSystem(this.entities, camera, stateStack);
-        tiledSpriteSystem(this.entities, camera);
+        controlSystem(this.entities, this.camera, stateStack);
+        tiledSpriteSystem(this.entities, this.camera);
         deathCheckSystem(this.player, this.onDeath);
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+    public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
         renderer.clear();
-        renderer.render(this.scene, camera);
+        renderer.render(this.scene, this.camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }

@@ -41,6 +41,7 @@ loadTextures([
     "../data/textures/spaceshipidle.png",
     "../data/textures/spaceshipmove.png",
     "../data/textures/earth.png",
+    "../data/textures/fancyCrosshair.png",
     "../data/textures/beacon.png",
     "../data/textures/beacoff.png",
 ]).then((textures) => {
@@ -93,10 +94,7 @@ function main(canvasContainer: HTMLElement) {
     setInterval(function (): void {
         if (stateStack.length > 0) {
             // call update on last element in state stack
-            if(last(stateStack).entities.length < 1) {
-                
-            }
-            last(stateStack).update(camera, stateStack);
+            last(stateStack).update(stateStack);
         }
         else {
             throw "No states to update";
@@ -116,7 +114,7 @@ function main(canvasContainer: HTMLElement) {
                 
         if (stateStack.length > 0) {
             // call render on last element in state stack
-            last(stateStack).render(renderer, camera);
+            last(stateStack).render(renderer, last(stateStack).camera);
         }
         else {
             throw "No states to render";

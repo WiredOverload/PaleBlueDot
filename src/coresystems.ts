@@ -17,6 +17,9 @@ import { Quaternion, Vector3, Euler, Camera } from "three";
 export function velocitySystem(ents: Readonly<Entity>[]) : void {
     ents.forEach(ent => { 
         if (ent.vel && ent.pos) {
+            if (ent.vel.friction) {
+                ent.vel.positional.multiplyScalar(ent.vel.friction);
+            }
             ent.pos.location.add(ent.vel.positional);
             ent.pos.direction.applyEuler(ent.vel.rotational);
         }
@@ -70,9 +73,14 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
     const maxRotVel = 0.1;
 
     ents.forEach(ent => {
-        if (ent.control && ent.vel && ent.pos) {
+        if (ent.control && ent.pos) {
             camera.position.copy(ent.pos.location).add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(360 - 64));
             camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
+
+            if (ent.control.beacon) {
+                ent.control.beacon = false;
+                ent.control.deploy_beacon(ent);
+            }
 
             if (ent.control.left) {
                 ent.vel.rotational.z += rotAccel;
@@ -104,34 +112,73 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
                 }
             }
             else {
-                ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
+                if(ent.anim) {
+                    ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
+                }
             }
 
-            if (ent.vel.positional.length() > maxPosVel) {
-                ent.vel.positional.multiplyScalar(maxPosVel / ent.vel.positional.length())
+            if(ent.vel) {
+                if (ent.vel.positional.length() > maxPosVel) {
+                    ent.vel.positional.multiplyScalar(maxPosVel / ent.vel.positional.length())
+                }
+
+                if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
+                    ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
+                }
+
+                ent.vel.rotational.z *= 0.95;
             }
 
-            if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
-                ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
-            }
-
-            ent.vel.rotational.z *= 0.95;
-            
             if(ent.control.camera){
-                if(stateStack.length < 2) {
-                    let cameraScene = new THREE.Scene();
-                    cameraScene.background = new THREE.Color("#FFFFFF");
-                    //const renderer = new THREE.WebGLRenderer();
-                    //renderer.setSize(1280, 720);
-                    //const rendererSize = renderer.getSize();
-                    const camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
-                    cameraScene.add(camera);
-                    let cameraGameState = new CameraState(cameraScene);
-                    stateStack.push(cameraGameState);
-                }
-                else {
-                    stateStack.pop();
-                }
+                let cameraScene = new THREE.Scene();
+                cameraScene.background = new THREE.Color("#000000");
+                //cameraScene.add(camera);
+                let cameraGameState = new CameraState(cameraScene);
+                stateStack.push(cameraGameState);
+                ent.control.camera = false;
+            }
+        }
+    });
+}
+
+export function cameraControlSystem(ents: Entity[], camera: THREE.Camera, stateStack: State[]) {
+    const posAccel = 0.1;
+    const rotAccel = 0.001;
+    const maxPosVel = 10;
+    const maxRotVel = 0.1;
+
+    ents.forEach(ent => {
+        
+        if (ent.control && ent.pos) {
+            camera.position.set(ent.pos.location.x, ent.pos.location.y, ent.pos.location.z);
+            camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
+            
+            if (ent.control.left) {
+                ent.vel.rotational.z += rotAccel;
+            }
+            else if (ent.control.right) {
+                ent.vel.rotational.z -= rotAccel;
+            }
+
+            if (ent.control.strafeleft) {
+                ent.vel.positional.add(ent.pos.direction.clone().multiplyScalar(-posAccel));
+            }
+            else if (ent.control.straferight) {
+                ent.vel.positional.add(ent.pos.direction.clone().multiplyScalar(posAccel));
+            }
+
+            if (ent.control.up) {
+                ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
+            }
+            else if (ent.control.down) {
+                ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
+            }
+
+            if(ent.control.camera){
+                //turn logic
+                var xCloseness:number = (ent.pos.location.x % 640) - 1;
+                stateStack.pop();
+                ent.control.camera = false;
             }
         }
     });

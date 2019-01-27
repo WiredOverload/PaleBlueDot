@@ -8,10 +8,12 @@ import {
     collisionSystem, 
     timerSystem, 
     animationSystem, 
-    velocitySystem 
+    velocitySystem, 
+    cameraControlSystem
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
-import { Vector3 } from "three";
+import { Vector3, Euler } from "three";
+import { initializeControls } from "./corecomponents";
 
 
 
@@ -21,33 +23,57 @@ import { Vector3 } from "three";
 export class CameraState implements State {
     public entities: Entity[];
     public scene: THREE.Scene;
+
+    public camera: THREE.Camera;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene){
         this.entities = [];
         this.scene = scene;
 
-        let background = new Entity();
-        background.pos = {location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
-        background.sprite = setSprite("../data/textures/cottage.png", scene, 2);
+        let backgrounds: Entity[] = [];
+        for(var i = 0; i < 9; i++){
+            let background = new Entity();
+            background.pos = {location: new Vector3(((i % 3) -1) * 4096, (Math.floor(i / 3) -1) * 2048, 0), direction: new Vector3(0, 1, 0)};
+            background.sprite = setSprite("../data/textures/space4096.png", scene, 1);
+            backgrounds.push(background);
+            this.entities.push(background);
+        }
+
+        let crosshair = new Entity();
+        crosshair.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
+        crosshair.sprite = setSprite("../data/textures/fancyCrosshair.png", scene, 4);
+        crosshair.control = initializeControls(null);
+        crosshair.vel = { positional: new Vector3(), rotational: new Euler() };
+        this.entities.push(crosshair);
+
+        let earth = new Entity();
+        earth.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
+        //earth.pos = { location: new Vector3((Math.random() * 8192) - 4096, (Math.random() * 4096) - 2048, 0), direction: new Vector3(0, 1, 0)};
+        earth.sprite = setSprite("../data/textures/earth.png", scene, .5);
+        this.entities.push(earth);
+
+        this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+        scene.add(this.camera);
         //add componant to render multiple times / teleport to wrap
-        this.entities.push(background);
+        
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(camera: THREE.Camera, stateStack: State[]) {
+    public update(stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
-        controlSystem(this.entities, camera, stateStack);
+        
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities, this.scene);
+        cameraControlSystem(this.entities, this.camera, stateStack);
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+    public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
         renderer.clear();
-        renderer.render(this.scene, camera);
+        renderer.render(this.scene, this.camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }
