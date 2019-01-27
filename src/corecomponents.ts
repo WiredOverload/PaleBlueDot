@@ -26,6 +26,7 @@ export interface ControllableComponent {
     down: boolean;
     left: boolean;
     right: boolean;
+    camera: boolean;
     strafeleft: boolean;
     straferight: boolean;
 }
@@ -92,6 +93,7 @@ export function initializeControls(): ControllableComponent {
         down: false,
         left: false,
         right: false,
+        camera: false,
         strafeleft: false,
         straferight: false,
     };

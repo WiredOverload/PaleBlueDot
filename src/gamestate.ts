@@ -11,7 +11,7 @@ import {
     velocitySystem 
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox, initializeHitBox } from "./corecomponents";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { asteroidAnim } from "../data/animations/asteroid";
 import { redAsteroidAnim } from "../data/animations/redAsteroid";
@@ -26,9 +26,11 @@ import { Vector3, Quaternion, Euler } from "three";
  */
 export class GameState implements State {
     public entities: Entity[];
+    public scene: THREE.Scene;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene){
         this.entities = [];
+        this.scene = scene;
         // set up entities
         let player = new Entity();
         player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
@@ -75,23 +77,23 @@ export class GameState implements State {
         this.entities.push(greenAsteroid);
         this.entities.push(earth);
         this.entities.push(background);
-
-        // this.rootWidget = new BoardhouseUI.Widget();
+         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(camera: THREE.Camera) {
+    public update(camera: THREE.Camera, stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities);
-        controlSystem(this.entities, camera);
+        controlSystem(this.entities, camera, stateStack);
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene) {
+    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
         positionSystem(this.entities);
 
-        renderer.render(scene, camera);
+        renderer.clear();
+        renderer.render(this.scene, camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }

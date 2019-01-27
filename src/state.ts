@@ -13,9 +13,11 @@ export interface State {
      */
     entities: Entity[];
 
-    update(camera: THREE.Camera);
+    scene: THREE.Scene;
+
+    update(camera: THREE.Camera, stateStack: State[]);
     
-    render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene);
+    render(renderer: THREE.WebGLRenderer, camera: THREE.Camera);
 
     // rootWidget: BoardhouseUI.Widget;
 }

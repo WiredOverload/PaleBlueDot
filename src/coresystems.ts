@@ -5,6 +5,9 @@ import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
 import { changeSequence } from "./helpers";
 import { SequenceTypes } from "./animationschema";
+import { State } from "./state";
+import { GameState } from "./gamestate";
+import { CameraState } from "./camerastate";
 import { Quaternion, Vector3, Euler } from "three";
 
 /**
@@ -60,7 +63,7 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
     });
 }
 
-export function controlSystem(ents: Entity[], camera: THREE.Camera) {
+export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: State[]) {
     const posAccel = 0.1;
     const rotAccel = 0.001;
     const maxPosVel = 10;
@@ -107,6 +110,23 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
             }
 
             ent.vel.rotational.z *= 0.95;
+            
+            if(ent.control.camera){
+                if(stateStack.length < 2) {
+                    let cameraScene = new THREE.Scene();
+                    cameraScene.background = new THREE.Color("#FFFFFF");
+                    //const renderer = new THREE.WebGLRenderer();
+                    //renderer.setSize(1280, 720);
+                    //const rendererSize = renderer.getSize();
+                    const camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+                    cameraScene.add(camera);
+                    let cameraGameState = new CameraState(cameraScene);
+                    stateStack.push(cameraGameState);
+                }
+                else {
+                    stateStack.pop();
+                }
+            }
         }
     });
 }

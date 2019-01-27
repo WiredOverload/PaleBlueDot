@@ -114,6 +114,19 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
+        if (e.keyCode === 32) {
+            // handle ui events first then pass to controls
+            last(stateStack).entities.forEach(ent=> {
+                if (ent.control !== undefined) {
+                    if(ent.control.camera) {
+                        ent.control.camera = false;
+                    }
+                    else {
+                        ent.control.camera = true;
+                    }
+                }
+            });
+        }
         if (e.key === 'a') {
             last(stateStack).entities.forEach(ent => {
                 if (ent.control) {
