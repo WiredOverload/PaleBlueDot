@@ -8,6 +8,10 @@ import {
      TimerComponent,
 } from "./corecomponents";
 
+export enum Flag {
+     BACKGROUND = 1 << 0,
+}
+
 /**
  * Class to represent an entity in the game. No constructor as an entity can
  * comprise of as many or as little of the properties listed here. Each component
@@ -15,6 +19,7 @@ import {
  * the properties within the component.
  */
 export class Entity {
+     public flags: Flag;
      public pos: PositionComponent;
      public vel: VelocityComponent;
      public sprite: THREE.Mesh;
