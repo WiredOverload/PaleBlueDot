@@ -12,7 +12,7 @@ import {
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox, initializeHitBox } from "./corecomponents";
-import { playerAnim } from "../data/animations/player";
+import { spaceshipAnim } from "../data/animations/spaceship";
 import { asteroidAnim } from "../data/animations/asteroid";
 import { redAsteroidAnim } from "../data/animations/redAsteroid";
 import { greenAsteroidAnim } from "../data/animations/greenAsteroid";
@@ -31,12 +31,12 @@ export class GameState implements State {
         // set up entities
         let player = new Entity();
         player.pos = { x: -100, y: -100, z: 5 , angle: 0};
-        player.sprite = setSprite("../data/textures/msknight.png", scene, 4);
+        player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
         player.control = initializeControls();
         player.vel = { xVelocity: 0, yVelocity: 0, rotationVelocity: 0 };
-        player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
+        player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        setHurtBoxGraphic(player.sprite, player.hurtBox);
+        // setHurtBoxGraphic(player.sprite, player.hurtBox);
 
         let asteroid = new Entity();
         asteroid.pos = { x: 100, y: 100, z: 5, angle: 0 };

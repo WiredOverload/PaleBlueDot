@@ -42,7 +42,6 @@ export interface AnimationSchema {
 
 export enum SequenceTypes {
     idle,
-    walk,
-    run,
+    move,
     attack
 }

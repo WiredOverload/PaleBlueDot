@@ -68,14 +68,14 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
                 ent.vel.rotationVelocity += Math.PI/1000;
                 camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
-                ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
+                // ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
             else if (ent.control.right) {
                 //ent.vel.xVelocity += .05;
                 ent.vel.rotationVelocity -= Math.PI/1000;
                 camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+                // ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
 
             if (ent.control.up) {
@@ -83,7 +83,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
                 ent.vel.yVelocity += Math.sin(ent.pos.angle) * 1;
                 //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
                 // test change seq
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
             }
             else if (ent.control.down) {
                 ent.vel.xVelocity -= Math.cos(ent.pos.angle) * 1;
@@ -91,7 +91,10 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
                 //ent.vel.rotationVelocity += 1;
                 //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
                 // test change seq
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+            }
+            else {
+                ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
             }
         }
     });

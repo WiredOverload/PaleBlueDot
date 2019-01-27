@@ -1,17 +1,17 @@
 import { AnimationSchema, SequenceTypes} from "../../src/animationschema";
 
-export const playerAnim: AnimationSchema = {
-    [SequenceTypes.walk]: [
+export const spaceshipAnim: AnimationSchema = {
+    [SequenceTypes.idle]: [
         {
             ticks: 0,
-            texture: "../data/textures/msknight.png",
+            texture: "../data/textures/spaceshipidle.png",
             nextFrame: 0
        },
     ],
-    [SequenceTypes.attack]: [
+    [SequenceTypes.move]: [
         {
             ticks: 0,
-            texture: "../data/textures/snow.png",
+            texture: "../data/textures/spaceshipmove.png",
             nextFrame: 0
        },
     ],
