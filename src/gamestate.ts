@@ -13,7 +13,7 @@ import {
     deathCheckSystem
 } from "./coresystems";
 import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox, initializeHurtBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
 import { Vector3, Euler, Camera, Mesh, Scene } from "three";
@@ -21,6 +21,7 @@ import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
 import { cleanUpAsteroidsSystem } from "./cleanupasteroidssystem";
+import { resourceDrainSystem } from "./resourcedrainsystem";
 
 
 /**
@@ -33,9 +34,11 @@ export class GameState implements State {
     public player: Entity;
 
     public camera: Camera;
+    public earth: Entity;
     private ui_scene: Scene;
     private ui_camera: Camera;
     private beacon_icons: Mesh[];
+    private bars: Mesh[];
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -61,7 +64,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.blue++;
+                    hittingEnt.resources.blue += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("blue: " + hittingEnt.resources.blue);
                 }
@@ -72,7 +75,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.red++;
+                    hittingEnt.resources.red += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("red: " + hittingEnt.resources.red);
                 }
@@ -83,7 +86,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.green++;
+                    hittingEnt.resources.green += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("green: " + hittingEnt.resources.green);
                 }
@@ -99,6 +102,9 @@ export class GameState implements State {
     private deploy_beacon = (ent: Entity) => {
         if (ent.resources.beacons) {
             ent.resources.beacons -= 1;
+            if (ent.resources.update_beacons) {
+                ent.resources.update_beacons(ent);
+            }
 
             const beacon = new Entity();
             const dir = ent.vel.positional.clone().normalize();
@@ -115,6 +121,25 @@ export class GameState implements State {
         }
     }
 
+    private update_beacons = (ent: Entity) => {
+        for (let i = 0; i < ent.resources.beacons; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = 20;
+        }
+        for (let i = ent.resources.beacons; i < this.beacon_icons.length; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = -200;
+        }
+    }
+
+    private update_bars = (ent: Entity) => {
+        this.bars[0].scale.x = ent.resources.red / 32;
+        this.bars[1].scale.x = ent.resources.green / 32;
+        this.bars[2].scale.x = ent.resources.blue / 32;
+    }
+
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene, stateStack: State[]){
         this.entities = [];
@@ -129,7 +154,7 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5 };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons, update_bars: this.update_bars };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
@@ -137,6 +162,25 @@ export class GameState implements State {
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
+        earth.hurtBox = initializeHurtBox(earth.sprite, HurtTypes.earth, 0, 0, 85, 85);
+        earth.resources = {blue: 1500, red: 1500, green: 1500, fuel: 0, beacons: 0};
+        earth.hurtBox.onHurt = function(hurtingEnt: Entity, hittingEnt: Entity) {
+            if (hittingEnt.resources) {
+                if (Math.abs(0 - Math.abs(hittingEnt.vel.positional.x)) <= .25 &&
+                    Math.abs(0 - Math.abs(hittingEnt.vel.positional.y)) <= .25) {
+                    hittingEnt.resources.fuel = 1800;
+                    hurtingEnt.resources.blue += hittingEnt.resources.blue;
+                    hurtingEnt.resources.green += hittingEnt.resources.green;
+                    hurtingEnt.resources.red += hittingEnt.resources.red;
+
+                    hittingEnt.resources.blue = 0;
+                    hittingEnt.resources.red = 0;
+                    hittingEnt.resources.green = 0;
+                }
+            }
+        }
+        
+        this.earth = earth;
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
@@ -163,7 +207,27 @@ export class GameState implements State {
         this.ui_scene = new Scene();
         this.ui_camera = new THREE.OrthographicCamera(0, 1280, 720, 0, -1000, 1000);
 
-        const widget = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
+        this.beacon_icons = [];
+        for (let i = 0; i < player.resources.beacons; ++i) {
+            const s = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
+            s.position.x = 20 * i;
+            s.position.y = 20;
+            this.beacon_icons.push(s);
+        }
+
+        this.bars = [
+            setSprite("../data/textures/redAsteroid1.png", this.ui_scene, 2),
+            setSprite("../data/textures/greenAsteroid1.png", this.ui_scene, 2),
+            setSprite("../data/textures/blueAsteroid1.png", this.ui_scene, 2),
+        ];
+
+        this.bars[0].position.set(32, 720-32, 0);
+        this.bars[1].position.set(32, 720-(32*2), 0);
+        this.bars[2].position.set(32, 720-(32*3), 0);
+
+        this.bars[0].scale.x = player.resources.red;
+        this.bars[1].scale.x = player.resources.green;
+        this.bars[2].scale.x = player.resources.blue;
     }
 
     public update(stateStack: State[]) {
@@ -177,6 +241,7 @@ export class GameState implements State {
         controlSystem(this.entities, this.camera, stateStack);
         tiledSpriteSystem(this.entities, this.camera);
         deathCheckSystem(this.player, this.onDeath);
+        resourceDrainSystem(this.earth, this.onDeath);
         cleanUpAsteroidsSystem(this.entities, this.camera, this.scene);
     }
 

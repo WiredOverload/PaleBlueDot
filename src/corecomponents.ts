@@ -90,7 +90,9 @@ export interface ResourcesComponent {
     green: number;
     red: number;
     fuel: number;
-    beacons: number;
+    beacons?: number;
+    update_beacons?: (ent: Entity) => void;
+    update_bars?: (ent: Entity) => void;
 }
 
 export interface HitByHarmfulDebrisComponent{
@@ -107,6 +109,7 @@ export interface HitByHarmfulDebrisComponent{
 export enum HurtTypes {
     test,
     asteroid,
+    earth,
     // ..
 }
 
