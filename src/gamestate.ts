@@ -18,6 +18,7 @@ import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
 import { Vector3, Euler } from "three";
 import { debrisSystem } from "./debrissystem";
+import { beaconAnim } from "../data/animations/beacon";
 
 
 /**
@@ -82,6 +83,11 @@ export class GameState implements State {
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
 
+        let beacon = new Entity();
+        beacon.pos = { location: new Vector3(200, 100, 3), direction: new Vector3(0, 1, 0) };
+        beacon.sprite = setSprite("../data/textures/beacon.png", scene, 2);
+        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
+
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
         background.tiledSprite = {
@@ -98,6 +104,7 @@ export class GameState implements State {
         //add component to render multiple times / teleport to wrap
         this.entities.push(player);
         this.entities.push(earth);
+        this.entities.push(beacon);
         this.entities.push(background);
          // this.rootWidget = new BoardhouseUI.Widget();
     }

@@ -41,6 +41,8 @@ loadTextures([
     "../data/textures/spaceshipidle.png",
     "../data/textures/spaceshipmove.png",
     "../data/textures/earth.png",
+    "../data/textures/beacon.png",
+    "../data/textures/beacoff.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;
