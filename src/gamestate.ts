@@ -43,6 +43,8 @@ export class GameState implements State {
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
             if (hittingEnt.resources) {
+                var audio = new Audio('../data/audio/hitwith_debris.wav');
+                audio.play();
                 hittingEnt.resources.fuel -= 100;
                 destroyEntity(hurtingEnt, this.entities, this.scene);
 
@@ -64,6 +66,8 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    audio.play();
                     hittingEnt.resources.blue += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("blue: " + hittingEnt.resources.blue);
@@ -75,6 +79,8 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    audio.play();
                     hittingEnt.resources.red += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("red: " + hittingEnt.resources.red);
@@ -86,6 +92,8 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    audio.play();
                     hittingEnt.resources.green += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("green: " + hittingEnt.resources.green);

@@ -130,6 +130,8 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
             }
 
             if(ent.control.camera){
+                var audio = new Audio('../data/audio/clickOpen.wav');
+                audio.play();
                 let cameraScene = new THREE.Scene();
                 cameraScene.background = new THREE.Color("#000000");
                 //cameraScene.add(camera);
