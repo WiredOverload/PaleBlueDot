@@ -155,7 +155,7 @@ export class GameState implements State {
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons };
-        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
+        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid, HurtTypes.earth]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
 
