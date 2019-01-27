@@ -173,6 +173,8 @@ export class GameState implements State {
                 if (Math.abs(0 - Math.abs(hittingEnt.vel.positional.x)) <= .25 &&
                     Math.abs(0 - Math.abs(hittingEnt.vel.positional.y)) <= .25) {
                     hittingEnt.resources.fuel = 1800;
+                    hittingEnt.resources.beacons = 5;
+                    hittingEnt.resources.update_beacons(hittingEnt);
                     hurtingEnt.resources.blue += hittingEnt.resources.blue;
                     hurtingEnt.resources.green += hittingEnt.resources.green;
                     hurtingEnt.resources.red += hittingEnt.resources.red;
