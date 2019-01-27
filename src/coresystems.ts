@@ -109,6 +109,8 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
                 ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
             }
 
+            ent.vel.rotational.z *= 0.95;
+            
             if(ent.control.camera){
                 if(stateStack.length < 2) {
                     let cameraScene = new THREE.Scene();
