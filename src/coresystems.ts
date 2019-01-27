@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 // import { setHitBoxGraphic } from "./helpers";
 import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
-import { changeSequence } from "./helpers";
+import { changeSequence, destroyEntity } from "./helpers";
 import { SequenceTypes } from "./animationschema";
 import { State } from "./state";
 import { GameState } from "./gamestate";
@@ -148,24 +148,13 @@ export function positionSystem(ents: Readonly<Entity>[]) {
     }
 }
 
-export function timerSystem(ents: Entity[]) {
+export function timerSystem(ents: Entity[], scene: THREE.Scene) {
     ents.forEach(ent => {
         if (ent.timer) {
             ent.timer.ticks--;
 
             if (ent.timer.ticks <= 0) {
-                // remove ent for ent list
-                ents.splice(ents.indexOf(ent), 1);
-
-                // // destroy sprite if ent has one
-                // if (ent.sprite) {
-                //     ent.sprite.destroy();
-                // }
-
-                // // destroy graphic if ent has one
-                // if (ent.graphic) {
-                //     ent.graphic.destroy();
-                // }
+                destroyEntity(ent, ents, scene);
             }
         }
     });

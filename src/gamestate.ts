@@ -77,7 +77,7 @@ export class GameState implements State {
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         player.resources = { blue: 0, green: 0, red: 0, fuel: 1800 };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
-        setHitBoxGraphic(player.sprite, player.hitBox);
+        // setHitBoxGraphic(player.sprite, player.hitBox);
 
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
@@ -114,8 +114,8 @@ export class GameState implements State {
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
-        timerSystem(this.entities);
-        debrisSystem(this.entities, this.scene, this.asteroidCollide);
+        timerSystem(this.entities, this.scene);
+        debrisSystem(this.entities, this.scene, this.asteroidCollide, camera);
         controlSystem(this.entities, camera, stateStack);
         tiledSpriteSystem(this.entities, camera);
         deathCheckSystem(this.player, this.onDeath);

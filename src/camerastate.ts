@@ -40,7 +40,7 @@ export class CameraState implements State {
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
-        timerSystem(this.entities);
+        timerSystem(this.entities, this.scene);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
