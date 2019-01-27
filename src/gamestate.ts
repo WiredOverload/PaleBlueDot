@@ -94,18 +94,22 @@ export class GameState implements State {
     }
 
     private deploy_beacon = (ent: Entity) => {
-        const beacon = new Entity();
-        const dir = ent.vel.positional.clone().normalize();
-        const x = dir.x;
-        dir.x = -dir.y;
-        dir.y = x;
-        beacon.flags |= Flag.BEACON;
-        beacon.pos = { location: ent.pos.location.clone(), direction: dir };
-        beacon.vel = { positional: ent.vel.positional.clone(), rotational: new Euler(), friction: 0.95 };
-        beacon.sprite = setSprite("../data/textures/beacon.png", this.scene, 2);
-        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
+        if (ent.resources.beacons) {
+            ent.resources.beacons -= 1;
 
-        this.entities.push(beacon);
+            const beacon = new Entity();
+            const dir = ent.vel.positional.clone().normalize();
+            const x = dir.x;
+            dir.x = -dir.y;
+            dir.y = x;
+            beacon.flags |= Flag.BEACON;
+            beacon.pos = { location: ent.pos.location.clone(), direction: dir };
+            beacon.vel = { positional: ent.vel.positional.clone(), rotational: new Euler(), friction: 0.95 };
+            beacon.sprite = setSprite("../data/textures/beacon.png", this.scene, 2);
+            beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
+    
+            this.entities.push(beacon);
+        }
     }
 
     // public rootWidget: BoardhouseUI.Widget;
@@ -122,7 +126,7 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800 };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5 };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
