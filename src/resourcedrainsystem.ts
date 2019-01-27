@@ -28,4 +28,8 @@ export function resourceDrainSystem(earth: Entity, onDeath: (reason: string) => 
             onDeath("Ran out of green resources!");
         }
     }
+    
+    if (earth.resources.update_bars) {
+        earth.resources.update_bars(earth);
+    }
 }

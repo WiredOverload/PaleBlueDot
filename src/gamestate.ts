@@ -154,7 +154,7 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons, update_bars: this.update_bars };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
@@ -163,7 +163,7 @@ export class GameState implements State {
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
         earth.hurtBox = initializeHurtBox(earth.sprite, HurtTypes.earth, 0, 0, 85, 85);
-        earth.resources = {blue: 1500, red: 1500, green: 1500, fuel: 0, beacons: 0};
+        earth.resources = {blue: 1500, red: 1500, green: 1500, fuel: 0, beacons: 0, update_bars: this.update_bars};
         earth.hurtBox.onHurt = function(hurtingEnt: Entity, hittingEnt: Entity) {
             if (hittingEnt.resources) {
                 if (Math.abs(0 - Math.abs(hittingEnt.vel.positional.x)) <= .25 &&
@@ -216,18 +216,18 @@ export class GameState implements State {
         }
 
         this.bars = [
-            setSprite("../data/textures/redAsteroid1.png", this.ui_scene, 2),
-            setSprite("../data/textures/greenAsteroid1.png", this.ui_scene, 2),
-            setSprite("../data/textures/blueAsteroid1.png", this.ui_scene, 2),
+            setSprite("../data/textures/red.png", this.ui_scene, 2),
+            setSprite("../data/textures/green.png", this.ui_scene, 2),
+            setSprite("../data/textures/blue.png", this.ui_scene, 2),
         ];
 
         this.bars[0].position.set(32, 720-32, 0);
         this.bars[1].position.set(32, 720-(32*2), 0);
         this.bars[2].position.set(32, 720-(32*3), 0);
 
-        this.bars[0].scale.x = player.resources.red;
-        this.bars[1].scale.x = player.resources.green;
-        this.bars[2].scale.x = player.resources.blue;
+        this.bars[0].scale.x = earth.resources.red / 32;
+        this.bars[1].scale.x = earth.resources.green / 32;
+        this.bars[2].scale.x = earth.resources.blue / 32;
     }
 
     public update(stateStack: State[]) {
