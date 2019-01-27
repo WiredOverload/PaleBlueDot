@@ -42,7 +42,7 @@ export class CameraState implements State {
         let crosshair = new Entity();
         crosshair.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
         crosshair.sprite = setSprite("../data/textures/fancyCrosshair.png", scene, 4);
-        crosshair.control = initializeControls();
+        crosshair.control = initializeControls(null);
         crosshair.vel = { positional: new Vector3(), rotational: new Euler() };
         this.entities.push(crosshair);
 
