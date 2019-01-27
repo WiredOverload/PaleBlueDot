@@ -140,6 +140,10 @@ export class GameState implements State {
         this.bars[2].scale.x = ent.resources.blue / 32;
     }
 
+    private update_fuel = (ent: Entity) => {
+        this.bars[3].scale.x = ent.resources.fuel / 32;
+    }
+
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene, stateStack: State[]){
         this.entities = [];
@@ -219,15 +223,18 @@ export class GameState implements State {
             setSprite("../data/textures/red.png", this.ui_scene, 1),
             setSprite("../data/textures/green.png", this.ui_scene, 1),
             setSprite("../data/textures/blue.png", this.ui_scene, 1),
+            setSprite("../data/textures/yellow.png", this.ui_scene, 1),
         ];
 
         this.bars[0].position.set(32, 720-32, 0);
         this.bars[1].position.set(32, 720-(32*2), 0);
         this.bars[2].position.set(32, 720-(32*3), 0);
+        this.bars[3].position.set(32, 720-(32*4), 0);
 
         this.bars[0].scale.x = earth.resources.red / 32;
         this.bars[1].scale.x = earth.resources.green / 32;
         this.bars[2].scale.x = earth.resources.blue / 32;
+        this.bars[3].scale.x = earth.resources.fuel / 32;
     }
 
     public update(stateStack: State[]) {
@@ -243,6 +250,7 @@ export class GameState implements State {
         deathCheckSystem(this.player, this.onDeath);
         resourceDrainSystem(this.earth, this.onDeath);
         cleanUpAsteroidsSystem(this.entities, this.camera, this.scene);
+        this.update_fuel(this.player);
     }
 
     public render(renderer: THREE.WebGLRenderer) {

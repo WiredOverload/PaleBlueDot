@@ -48,6 +48,7 @@ loadTextures([
     "../data/textures/red.png",
     "../data/textures/green.png",
     "../data/textures/blue.png",
+    "../data/textures/yellow.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;
