@@ -42,6 +42,8 @@ loadTextures([
     "../data/textures/spaceshipmove.png",
     "../data/textures/earth.png",
     "../data/textures/fancyCrosshair.png",
+    "../data/textures/beacon.png",
+    "../data/textures/beacoff.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;
@@ -76,7 +78,7 @@ function main(canvasContainer: HTMLElement) {
 
     // initialize state stack
     let stateStack: State[] = [];
-    let gameState = new GameState(scene);
+    let gameState = new GameState(scene, stateStack);
     stateStack.push(gameState);
 
     let fps: number = 0;

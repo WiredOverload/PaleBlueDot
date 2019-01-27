@@ -3,12 +3,12 @@ import { Entity } from "./entity";
 // import { setHitBoxGraphic } from "./helpers";
 import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
-import { changeSequence } from "./helpers";
+import { changeSequence, destroyEntity } from "./helpers";
 import { SequenceTypes } from "./animationschema";
 import { State } from "./state";
 import { GameState } from "./gamestate";
 import { CameraState } from "./camerastate";
-import { Quaternion, Vector3, Euler } from "three";
+import { Quaternion, Vector3, Euler, Camera } from "three";
 
 /**
  * Rudimentary velocity implementation... will replace directions with
@@ -91,14 +91,16 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
 
             if (ent.control.up) {
                 ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
-                if(ent.anim) {
-                    ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if (ent.resources) {
+                    ent.resources.fuel -= 1;
                 }
             }
             else if (ent.control.down) {
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
-                if(ent.anim) {
-                    ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if (ent.resources) {
+                    ent.resources.fuel -= 1;
                 }
             }
             else {
@@ -183,25 +185,39 @@ export function positionSystem(ents: Readonly<Entity>[]) {
     }
 }
 
-export function timerSystem(ents: Entity[]) {
+export function timerSystem(ents: Entity[], scene: THREE.Scene) {
     ents.forEach(ent => {
         if (ent.timer) {
             ent.timer.ticks--;
 
             if (ent.timer.ticks <= 0) {
-                // remove ent for ent list
-                ents.splice(ents.indexOf(ent), 1);
-
-                // // destroy sprite if ent has one
-                // if (ent.sprite) {
-                //     ent.sprite.destroy();
-                // }
-
-                // // destroy graphic if ent has one
-                // if (ent.graphic) {
-                //     ent.graphic.destroy();
-                // }
+                destroyEntity(ent, ents, scene);
             }
         }
     });
+}
+
+export function tiledSpriteSystem(ents: Entity[], camera: Camera) {
+    ents.forEach(ent => {
+        if (ent.tiledSprite) {
+            const tilePos = camera.position.clone();
+
+            tilePos.x = Math.round(tilePos.x / ent.tiledSprite.width);
+            tilePos.y = Math.round(tilePos.y / ent.tiledSprite.height);
+
+            const hOff = camera.position.x < tilePos.x * ent.tiledSprite.width ? -1 : 1;
+            const vOff = camera.position.y < tilePos.y * ent.tiledSprite.height ? -1 : 1;
+
+            ent.tiledSprite.sprites[0].position.set(tilePos.x * ent.tiledSprite.width, tilePos.y * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[1].position.set((tilePos.x + hOff) * ent.tiledSprite.width, tilePos.y * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[2].position.set(tilePos.x * ent.tiledSprite.width, (tilePos.y + vOff) * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[3].position.set((tilePos.x + hOff) * ent.tiledSprite.width, (tilePos.y + vOff) * ent.tiledSprite.height, 0);
+        }
+    });
+}
+
+export function deathCheckSystem(player: Entity, killPlayer: (reason: string) => void) {
+    if (player.resources.fuel <= 0) {
+        killPlayer('Out of fuel!');
+    }
 }

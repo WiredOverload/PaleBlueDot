@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { SequenceTypes, AnimationSchema } from "./animationschema";
+import { Mesh } from "three";
 import { Entity } from "./entity";
 
 /**
@@ -75,10 +76,17 @@ export interface TimerComponent {
     ticks: number;
 }
 
+export interface TiledSpriteComponent {
+    sprites: Mesh[];
+    width: number;
+    height: number;
+}
+
 export interface ResourcesComponent {
     blue: number;
     green: number;
     red: number;
+    fuel: number;
 }
 
 /**

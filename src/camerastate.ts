@@ -61,7 +61,7 @@ export class CameraState implements State {
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
-        timerSystem(this.entities);
+        timerSystem(this.entities, this.scene);
         cameraControlSystem(this.entities, camera, stateStack);
     }
 
