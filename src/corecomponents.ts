@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { SequenceTypes, AnimationSchema } from "./animationschema";
+import { Mesh } from "three";
 
 /**
  * Position component.
@@ -72,6 +73,12 @@ export interface AnimationComponent {
  */
 export interface TimerComponent {
     ticks: number;
+}
+
+export interface TiledSpriteComponent {
+    sprites: Mesh[];
+    width: number;
+    height: number;
 }
 
 /**

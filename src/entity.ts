@@ -6,6 +6,7 @@ import {
      HitBoxComponent,
      HurtBoxComponent,
      TimerComponent,
+     TiledSpriteComponent,
 } from "./corecomponents";
 
 export enum Flag {
@@ -29,4 +30,5 @@ export class Entity {
      public hitBox: HitBoxComponent;
      public hurtBox: HurtBoxComponent;
      public timer: TimerComponent;
+     public tiledSprite: TiledSpriteComponent;
 }

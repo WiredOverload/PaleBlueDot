@@ -8,9 +8,10 @@ import {
     collisionSystem, 
     timerSystem, 
     animationSystem, 
-    velocitySystem 
+    velocitySystem, 
+    tiledSpriteSystem
 } from "./coresystems";
-import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
+import { setSprite } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { asteroidAnim } from "../data/animations/asteroid";
@@ -18,8 +19,7 @@ import { redAsteroidAnim } from "../data/animations/redAsteroid";
 import { greenAsteroidAnim } from "../data/animations/greenAsteroid";
 import { blueAsteroidAnim } from "../data/animations/blueAsteroid";
 import { SequenceTypes } from "./animationschema";
-import { Vector3, Quaternion, Euler } from "three";
-
+import { Vector3, Euler } from "three";
 
 /**
  * GameState that handles updating of all game-related systems.
@@ -67,7 +67,16 @@ export class GameState implements State {
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
-        background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
+        background.tiledSprite = {
+            sprites: [
+                setSprite("../data/textures/space4096.png", scene, 2),
+                setSprite("../data/textures/space4096.png", scene, 2),
+                setSprite("../data/textures/space4096.png", scene, 2),
+                setSprite("../data/textures/space4096.png", scene, 2),
+            ],
+            width: 4096 * 2,
+            height: 4096,
+        };
         
         //add componant to render multiple times / teleport to wrap
         this.entities.push(player);
@@ -87,6 +96,7 @@ export class GameState implements State {
         animationSystem(this.entities);
         timerSystem(this.entities);
         controlSystem(this.entities, camera, stateStack);
+        tiledSpriteSystem(this.entities, camera);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {

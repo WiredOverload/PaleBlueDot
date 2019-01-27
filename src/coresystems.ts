@@ -8,7 +8,7 @@ import { SequenceTypes } from "./animationschema";
 import { State } from "./state";
 import { GameState } from "./gamestate";
 import { CameraState } from "./camerastate";
-import { Quaternion, Vector3, Euler } from "three";
+import { Quaternion, Vector3, Euler, Camera } from "three";
 
 /**
  * Rudimentary velocity implementation... will replace directions with
@@ -161,6 +161,25 @@ export function timerSystem(ents: Entity[]) {
                 //     ent.graphic.destroy();
                 // }
             }
+        }
+    });
+}
+
+export function tiledSpriteSystem(ents: Entity[], camera: Camera) {
+    ents.forEach(ent => {
+        if (ent.tiledSprite) {
+            const tilePos = camera.position.clone();
+
+            tilePos.x = Math.round(tilePos.x / ent.tiledSprite.width);
+            tilePos.y = Math.round(tilePos.y / ent.tiledSprite.height);
+
+            const hOff = camera.position.x < tilePos.x * ent.tiledSprite.width ? -1 : 1;
+            const vOff = camera.position.y < tilePos.y * ent.tiledSprite.height ? -1 : 1;
+
+            ent.tiledSprite.sprites[0].position.set(tilePos.x * ent.tiledSprite.width, tilePos.y * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[1].position.set((tilePos.x + hOff) * ent.tiledSprite.width, tilePos.y * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[2].position.set(tilePos.x * ent.tiledSprite.width, (tilePos.y + vOff) * ent.tiledSprite.height, 0);
+            ent.tiledSprite.sprites[3].position.set((tilePos.x + hOff) * ent.tiledSprite.width, (tilePos.y + vOff) * ent.tiledSprite.height, 0);
         }
     });
 }
