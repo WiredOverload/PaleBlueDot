@@ -41,6 +41,7 @@ loadTextures([
     "../data/textures/spaceshipidle.png",
     "../data/textures/spaceshipmove.png",
     "../data/textures/earth.png",
+    "../data/textures/fancyCrosshair.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;
@@ -91,10 +92,7 @@ function main(canvasContainer: HTMLElement) {
     setInterval(function (): void {
         if (stateStack.length > 0) {
             // call update on last element in state stack
-            if(last(stateStack).entities.length < 1) {
-                
-            }
-            last(stateStack).update(camera, stateStack);
+            last(stateStack).update(camera, stateStack);//wrong camera here
         }
         else {
             throw "No states to update";

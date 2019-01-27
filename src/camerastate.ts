@@ -11,7 +11,8 @@ import {
     velocitySystem 
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
-import { Vector3 } from "three";
+import { Vector3, Euler } from "three";
+import { initializeControls } from "./corecomponents";
 
 
 
@@ -26,21 +27,41 @@ export class CameraState implements State {
         this.entities = [];
         this.scene = scene;
 
-        let background = new Entity();
-        background.pos = {location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
-        background.sprite = setSprite("../data/textures/cottage.png", scene, 2);
+        let backgrounds: Entity[] = [];
+        for(var i = 0; i < 9; i++){
+            let background = new Entity();
+            background.pos = {location: new Vector3(((i % 3) -1) * 4096, (Math.floor(i / 3) -1) * 2048, 0), direction: new Vector3(0, 1, 0)};
+            background.sprite = setSprite("../data/textures/space4096.png", scene, 1);
+            backgrounds.push(background);
+            this.entities.push(background);
+        }
+
+        let crosshair = new Entity();
+        crosshair.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
+        crosshair.sprite = setSprite("../data/textures/fancyCrosshair.png", scene, 4);
+        crosshair.control = initializeControls();
+        crosshair.vel = { positional: new Vector3(), rotational: new Euler() };
+        this.entities.push(crosshair);
+
+        let earth = new Entity();
+        earth.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
+        //earth.pos = { location: new Vector3((Math.random() * 8192) - 4096, (Math.random() * 4096) - 2048, 0), direction: new Vector3(0, 1, 0)};
+        earth.sprite = setSprite("../data/textures/earth.png", scene, .5);
+        this.entities.push(earth);
+
         //add componant to render multiple times / teleport to wrap
-        this.entities.push(background);
+        
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
     public update(camera: THREE.Camera, stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
-        controlSystem(this.entities, camera, stateStack);
+        
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities);
+        controlSystem(this.entities, camera, stateStack);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {

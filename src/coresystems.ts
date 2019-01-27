@@ -70,10 +70,10 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
     const maxRotVel = 0.1;
 
     ents.forEach(ent => {
-        if (ent.control && ent.vel && ent.pos) {
+        if (ent.control && ent.pos) {
             camera.position.copy(ent.pos.location).add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(360 - 64));
             camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
-
+            
             if (ent.control.left) {
                 ent.vel.rotational.z += rotAccel;
             }
@@ -91,34 +91,42 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
 
             if (ent.control.up) {
                 ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
-                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if(ent.anim) {
+                    ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                }
             }
             else if (ent.control.down) {
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
-                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if(ent.anim) {
+                    ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                }
             }
             else {
-                ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
+                if(ent.anim) {
+                    ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
+                }
             }
 
-            if (ent.vel.positional.length() > maxPosVel) {
-                ent.vel.positional.multiplyScalar(maxPosVel / ent.vel.positional.length())
-            }
+            if(ent.vel) {
+                if (ent.vel.positional.length() > maxPosVel) {
+                    ent.vel.positional.multiplyScalar(maxPosVel / ent.vel.positional.length())
+                }
 
-            if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
-                ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
-            }
+                if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
+                    ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
+                }
 
-            ent.vel.rotational.z *= 0.95;
-            
+                ent.vel.rotational.z *= 0.95;
+            }
             if(ent.control.camera){
                 if(stateStack.length < 2) {
+                    //camera.position.set(0, 0, 0);
                     let cameraScene = new THREE.Scene();
-                    cameraScene.background = new THREE.Color("#FFFFFF");
+                    cameraScene.background = new THREE.Color("#000000");
                     //const renderer = new THREE.WebGLRenderer();
                     //renderer.setSize(1280, 720);
                     //const rendererSize = renderer.getSize();
-                    const camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+                    //const camera2 = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
                     cameraScene.add(camera);
                     let cameraGameState = new CameraState(cameraScene);
                     stateStack.push(cameraGameState);
@@ -126,6 +134,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
                 else {
                     stateStack.pop();
                 }
+                ent.control.camera = false;
             }
         }
     });
