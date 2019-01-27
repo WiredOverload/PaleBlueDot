@@ -20,6 +20,7 @@ import { Vector3, Euler, Camera, Mesh, Scene } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
+import { cleanUpAsteroidsSystem } from "./cleanupasteroidssystem";
 
 
 /**
@@ -176,6 +177,7 @@ export class GameState implements State {
         controlSystem(this.entities, this.camera, stateStack);
         tiledSpriteSystem(this.entities, this.camera);
         deathCheckSystem(this.player, this.onDeath);
+        cleanUpAsteroidsSystem(this.entities, this.camera, this.scene);
     }
 
     public render(renderer: THREE.WebGLRenderer) {

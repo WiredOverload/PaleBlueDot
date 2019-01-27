@@ -24,8 +24,6 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         xPos *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         spawnPoints.push({ xPos: xPos, yPos: yPos });
     }
-    const cameraXPos = 0; // set from camera
-    const cameraYPos = 0; // set from camera;
 
     if (randomNum === 5 || randomNum === 632 || randomNum === 633) {
         let asteroid = new Entity();
