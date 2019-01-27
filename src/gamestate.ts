@@ -32,28 +32,37 @@ export class GameState implements State {
 
     public camera: Camera;
     
-    public asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
+    private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.BLUEDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.blue++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("blue: " + hittingEnt.resources.blue);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.blue++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("blue: " + hittingEnt.resources.blue);
+                }
             }
         }
 
         if (hurtingEnt.flags & Flag.REDDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.red++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("red: " + hittingEnt.resources.red);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.red++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("red: " + hittingEnt.resources.red);
+                }
             }
         }
 
         if (hurtingEnt.flags & Flag.GREENDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.green++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("green: " + hittingEnt.resources.green);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.green++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("green: " + hittingEnt.resources.green);
+                }
             }
         }
     }
@@ -61,6 +70,21 @@ export class GameState implements State {
     private onDeath = (reason: string) => {
         alert('You died! ' + reason);
         this.stateStack.pop();
+    }
+
+    private deploy_beacon = (ent: Entity) => {
+        const beacon = new Entity();
+        const dir = ent.vel.positional.clone().normalize();
+        const x = dir.x;
+        dir.x = -dir.y;
+        dir.y = x;
+        beacon.flags |= Flag.BEACON;
+        beacon.pos = { location: ent.pos.location.clone(), direction: dir };
+        beacon.vel = { positional: ent.vel.positional.clone(), rotational: new Euler(), friction: 0.95 };
+        beacon.sprite = setSprite("../data/textures/beacon.png", this.scene, 2);
+        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
+
+        this.entities.push(beacon);
     }
 
     // public rootWidget: BoardhouseUI.Widget;
@@ -73,7 +97,7 @@ export class GameState implements State {
         this.player = player;
         player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
         player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
-        player.control = initializeControls();
+        player.control = initializeControls(this.deploy_beacon);
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
@@ -84,11 +108,6 @@ export class GameState implements State {
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
-
-        let beacon = new Entity();
-        beacon.pos = { location: new Vector3(200, 100, 3), direction: new Vector3(0, 1, 0) };
-        beacon.sprite = setSprite("../data/textures/beacon.png", scene, 2);
-        beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
@@ -106,7 +125,6 @@ export class GameState implements State {
         //add component to render multiple times / teleport to wrap
         this.entities.push(player);
         this.entities.push(earth);
-        this.entities.push(beacon);
         this.entities.push(background);
 
         this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);

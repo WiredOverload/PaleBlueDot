@@ -44,7 +44,7 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         redAsteroid.hurtBox.onHurt = asteroidCollide;
         // setHurtBoxGraphic(redAsteroid.sprite, redAsteroid.hurtBox);
         redAsteroid.vel = {positional: new THREE.Vector3(velX, velY, 0), rotational: new THREE.Euler() }
-        redAsteroid.timer = {ticks: 60 * 20};
+        // redAsteroid.timer = {ticks: 60 * 20};
 
         ents.push(redAsteroid);
     }
@@ -64,7 +64,7 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         greenAsteroid.hurtBox.onHurt = asteroidCollide;
         // setHurtBoxGraphic(greenAsteroid.sprite, greenAsteroid.hurtBox);
         greenAsteroid.vel = {positional: new THREE.Vector3(velX, velY, 0), rotational: new THREE.Euler() }
-        greenAsteroid.timer = {ticks: 60 * 20};
+        // greenAsteroid.timer = {ticks: 60 * 20};
 
         ents.push(greenAsteroid);
     }
@@ -84,7 +84,7 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         blueAsteroid.hurtBox.onHurt = asteroidCollide;
         // setHurtBoxGraphic(blueAsteroid.sprite, blueAsteroid.hurtBox);
         blueAsteroid.vel = {positional: new THREE.Vector3(velX, velY, 0), rotational: new THREE.Euler() }
-        blueAsteroid.timer = {ticks: 60 * 20};
+        // blueAsteroid.timer = {ticks: 60 * 20};
 
         ents.push(blueAsteroid);
     }
