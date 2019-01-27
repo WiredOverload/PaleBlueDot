@@ -30,28 +30,37 @@ export class GameState implements State {
     public stateStack: State[];
     public player: Entity;
     
-    public asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
+    private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.BLUEDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.blue++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("blue: " + hittingEnt.resources.blue);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.blue++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("blue: " + hittingEnt.resources.blue);
+                }
             }
         }
 
         if (hurtingEnt.flags & Flag.REDDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.red++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("red: " + hittingEnt.resources.red);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.red++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("red: " + hittingEnt.resources.red);
+                }
             }
         }
 
         if (hurtingEnt.flags & Flag.GREENDEBRIS) {
             if (hittingEnt.resources) {
-                hittingEnt.resources.green++;
-                destroyEntity(hurtingEnt, this.entities, this.scene);
-                console.log("green: " + hittingEnt.resources.green);
+                if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
+                    Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
+                    hittingEnt.resources.green++;
+                    destroyEntity(hurtingEnt, this.entities, this.scene);
+                    console.log("green: " + hittingEnt.resources.green);
+                }
             }
         }
     }
