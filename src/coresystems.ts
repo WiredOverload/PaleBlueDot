@@ -57,7 +57,10 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
 }
 
 export function controlSystem(ents: Entity[], camera: THREE.Camera) {
-    const rotAccel = 0.0001;
+    const posAccel = 0.1;
+    const rotAccel = 0.001;
+    const maxPosVel = 10;
+    const maxRotVel = 0.1;
 
     ents.forEach(ent => {
         if (ent.control && ent.vel && ent.pos) {
@@ -74,12 +77,20 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
             }
 
             if (ent.control.up) {
-                ent.vel.positional.add(ent.pos.direction);
+                ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
             else if (ent.control.down) {
-                ent.vel.positional.add(new Vector3().copy(ent.pos.direction).multiplyScalar(-1));
+                ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+            }
+
+            if (ent.vel.positional.length() > maxPosVel) {
+                ent.vel.positional.multiplyScalar(maxPosVel / ent.vel.positional.length())
+            }
+
+            if (Math.abs(ent.vel.rotational.z) > maxRotVel) {
+                ent.vel.rotational.z *= maxRotVel / Math.abs(ent.vel.rotational.z);
             }
         }
     });
