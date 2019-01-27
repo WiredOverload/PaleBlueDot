@@ -37,6 +37,7 @@ export class GameState implements State {
     private ui_scene: Scene;
     private ui_camera: Camera;
     private beacon_icons: Mesh[];
+    private bars: Mesh[];
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -132,6 +133,12 @@ export class GameState implements State {
         }
     }
 
+    private update_bars = (ent: Entity) => {
+        this.bars[0].scale.x = ent.resources.red / 32;
+        this.bars[1].scale.x = ent.resources.green / 32;
+        this.bars[2].scale.x = ent.resources.blue / 32;
+    }
+
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene, stateStack: State[]){
         this.entities = [];
@@ -146,7 +153,7 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons, update_bars: this.update_bars };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
@@ -204,6 +211,20 @@ export class GameState implements State {
             s.position.y = 20;
             this.beacon_icons.push(s);
         }
+
+        this.bars = [
+            setSprite("../data/textures/redAsteroid1.png", this.ui_scene, 2),
+            setSprite("../data/textures/greenAsteroid1.png", this.ui_scene, 2),
+            setSprite("../data/textures/blueAsteroid1.png", this.ui_scene, 2),
+        ];
+
+        this.bars[0].position.set(32, 720-32, 0);
+        this.bars[1].position.set(32, 720-(32*2), 0);
+        this.bars[2].position.set(32, 720-(32*3), 0);
+
+        this.bars[0].scale.x = player.resources.red;
+        this.bars[1].scale.x = player.resources.green;
+        this.bars[2].scale.x = player.resources.blue;
     }
 
     public update(stateStack: State[]) {

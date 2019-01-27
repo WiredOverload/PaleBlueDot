@@ -92,6 +92,7 @@ export interface ResourcesComponent {
     fuel: number;
     beacons?: number;
     update_beacons?: (ent: Entity) => void;
+    update_bars?: (ent: Entity) => void;
 }
 
 export interface HitByHarmfulDebrisComponent{
