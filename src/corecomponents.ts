@@ -90,7 +90,8 @@ export interface ResourcesComponent {
     green: number;
     red: number;
     fuel: number;
-    beacons: number;
+    beacons?: number;
+    update_beacons?: (ent: Entity) => void;
 }
 
 export interface HitByHarmfulDebrisComponent{

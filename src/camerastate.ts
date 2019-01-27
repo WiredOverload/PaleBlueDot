@@ -23,10 +23,11 @@ import { initializeControls } from "./corecomponents";
 export class CameraState implements State {
     public entities: Entity[];
     public scene: THREE.Scene;
-
     public camera: THREE.Camera;
+    public player: Entity;
     // public rootWidget: BoardhouseUI.Widget;
-    constructor(scene: THREE.Scene){
+    constructor(scene: THREE.Scene, player: Entity, earthSize: number){
+        this.player = player;
         this.entities = [];
         this.scene = scene;
 
@@ -34,13 +35,13 @@ export class CameraState implements State {
         for(var i = 0; i < 9; i++){
             let background = new Entity();
             background.pos = {location: new Vector3(((i % 3) -1) * 4096, (Math.floor(i / 3) -1) * 2048, 0), direction: new Vector3(0, 1, 0)};
-            background.sprite = setSprite("../data/textures/space4096.png", scene, 1);
+            background.sprite = setSprite("../data/textures/space4096Square.png", scene, 1);
             backgrounds.push(background);
             this.entities.push(background);
         }
 
         let crosshair = new Entity();
-        crosshair.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
+        crosshair.pos = { location: new Vector3((Math.random() * 8192) - 4096, (Math.random() * 8192) - 4096, 0), direction: new Vector3(0, 1, 0)};
         crosshair.sprite = setSprite("../data/textures/fancyCrosshair.png", scene, 4);
         crosshair.control = initializeControls(null);
         crosshair.vel = { positional: new Vector3(), rotational: new Euler() };
@@ -49,7 +50,7 @@ export class CameraState implements State {
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 0), direction: new Vector3(0, 1, 0)};
         //earth.pos = { location: new Vector3((Math.random() * 8192) - 4096, (Math.random() * 4096) - 2048, 0), direction: new Vector3(0, 1, 0)};
-        earth.sprite = setSprite("../data/textures/earth.png", scene, .5);
+        earth.sprite = setSprite("../data/textures/earth.png", scene, earthSize);
         this.entities.push(earth);
 
         this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);

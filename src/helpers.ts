@@ -19,6 +19,7 @@ export function setSprite(url: string, scene: THREE.Scene, pixelRatio: number) :
     spriteMap.magFilter = THREE.NearestFilter;
     var material = new THREE.MeshBasicMaterial( { map: spriteMap, transparent: true });
     var sprite = new THREE.Mesh(geometry, material);
+
     scene.add(sprite);
 
     return sprite;

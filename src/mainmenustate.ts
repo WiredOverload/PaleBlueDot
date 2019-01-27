@@ -11,6 +11,7 @@ export class MainMenuState implements State {
     public entities: Entity[];
     public scene;
     public camera;
+    public player;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(stateStack: State[]) { //stage: PIXI.Container) {
         this.entities = [];

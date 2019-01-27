@@ -16,7 +16,7 @@ import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox, initializeHurtBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
-import { Vector3, Euler, Camera } from "three";
+import { Vector3, Euler, Camera, Mesh, Scene } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
@@ -34,6 +34,9 @@ export class GameState implements State {
 
     public camera: Camera;
     public earth: Entity;
+    private ui_scene: Scene;
+    private ui_camera: Camera;
+    private beacon_icons: Mesh[];
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -97,6 +100,9 @@ export class GameState implements State {
     private deploy_beacon = (ent: Entity) => {
         if (ent.resources.beacons) {
             ent.resources.beacons -= 1;
+            if (ent.resources.update_beacons) {
+                ent.resources.update_beacons(ent);
+            }
 
             const beacon = new Entity();
             const dir = ent.vel.positional.clone().normalize();
@@ -110,6 +116,19 @@ export class GameState implements State {
             beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
     
             this.entities.push(beacon);
+        }
+    }
+
+    private update_beacons = (ent: Entity) => {
+        for (let i = 0; i < ent.resources.beacons; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = 20;
+        }
+        for (let i = ent.resources.beacons; i < this.beacon_icons.length; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = -200;
         }
     }
 
@@ -127,8 +146,8 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5 };
-        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid, HurtTypes.earth]);
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons };
+        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
 
@@ -174,6 +193,17 @@ export class GameState implements State {
         this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
         scene.add(this.camera);
          // this.rootWidget = new BoardhouseUI.Widget();
+        
+        this.ui_scene = new Scene();
+        this.ui_camera = new THREE.OrthographicCamera(0, 1280, 720, 0, -1000, 1000);
+
+        this.beacon_icons = [];
+        for (let i = 0; i < player.resources.beacons; ++i) {
+            const s = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
+            s.position.x = 20 * i;
+            s.position.y = 20;
+            this.beacon_icons.push(s);
+        }
     }
 
     public update(stateStack: State[]) {
@@ -193,8 +223,10 @@ export class GameState implements State {
     public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
+        renderer.autoClear = false;
         renderer.clear();
         renderer.render(this.scene, this.camera);
+        renderer.render(this.ui_scene, this.ui_camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }
