@@ -18,6 +18,7 @@ import { redAsteroidAnim } from "../data/animations/redAsteroid";
 import { greenAsteroidAnim } from "../data/animations/greenAsteroid";
 import { blueAsteroidAnim } from "../data/animations/blueAsteroid";
 import { SequenceTypes } from "./animationschema";
+import { Vector3, Quaternion, Euler } from "three";
 
 
 /**
@@ -30,40 +31,40 @@ export class GameState implements State {
         this.entities = [];
         // set up entities
         let player = new Entity();
-        player.pos = { x: -100, y: -100, z: 5 , angle: 0};
+        player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
         player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
         player.control = initializeControls();
-        player.vel = { xVelocity: 0, yVelocity: 0, rotationVelocity: 0 };
+        player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         // setHurtBoxGraphic(player.sprite, player.hurtBox);
 
         let asteroid = new Entity();
-        asteroid.pos = { x: 100, y: 100, z: 5, angle: 0 };
+        asteroid.pos = { location: new Vector3(100, 100, 5), direction: new Vector3(0, 1, 0) };
         asteroid.sprite = setSprite("../data/textures/asteroid1.png", scene, 4);
         asteroid.anim = initializeAnimation(SequenceTypes.idle, asteroidAnim);
 
         let redAsteroid = new Entity();
-        redAsteroid.pos = { x: -250, y: 175, z: 4, angle: 0 };
+        redAsteroid.pos = { location: new Vector3(-250, 175, 4), direction: new Vector3(0, 1, 0) };
         redAsteroid.sprite = setSprite("../data/textures/redAsteroid1.png", scene, 4);
         redAsteroid.anim = initializeAnimation(SequenceTypes.idle, redAsteroidAnim);
 
         let greenAsteroid = new Entity();
-        greenAsteroid.pos = { x: -200, y: 125, z: 4, angle: 0 };
+        greenAsteroid.pos = { location: new Vector3(-200, 125, 4), direction: new Vector3(0, 1, 0) };
         greenAsteroid.sprite = setSprite("../data/textures/greenAsteroid1.png", scene, 4);
         greenAsteroid.anim = initializeAnimation(SequenceTypes.idle, greenAsteroidAnim);
 
         let blueAsteroid = new Entity();
-        blueAsteroid.pos = { x: -150, y: 75, z: 4, angle: 0 };
+        blueAsteroid.pos = { location: new Vector3(-150, 75, 4), direction: new Vector3(0, 1, 0) };
         blueAsteroid.sprite = setSprite("../data/textures/blueAsteroid1.png", scene, 4);
         blueAsteroid.anim = initializeAnimation(SequenceTypes.idle, blueAsteroidAnim);
 
         let earth = new Entity();
-        earth.pos = { x: 0, y: 0, z: 1, angle: 0 }
+        earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
 
         let background = new Entity();
-        background.pos = {x: 0, y: 0, z: 0, angle: 0};
+        background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
         background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
         
         //add componant to render multiple times / teleport to wrap
@@ -80,11 +81,11 @@ export class GameState implements State {
 
     public update(camera: THREE.Camera) {
         // pull in all system free functions and call each in the proper order
-        controlSystem(this.entities, camera);
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities);
+        controlSystem(this.entities, camera);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene) {

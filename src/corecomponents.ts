@@ -5,10 +5,8 @@ import { SequenceTypes, AnimationSchema } from "./animationschema";
  * Position component.
  */
 export interface PositionComponent {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
+    location: THREE.Vector3;
+    direction: THREE.Vector3;
 }
 
 /**
@@ -16,9 +14,8 @@ export interface PositionComponent {
  * angle and magnitude later on
  */
 export interface VelocityComponent {
-    xVelocity: number;
-    yVelocity: number;
-    rotationVelocity: number;
+    positional: THREE.Vector3;
+    rotational: THREE.Euler;
 }
 
 /**
