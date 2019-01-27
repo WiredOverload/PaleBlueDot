@@ -86,6 +86,7 @@ export interface ResourcesComponent {
     blue: number;
     green: number;
     red: number;
+    fuel: number;
 }
 
 /**

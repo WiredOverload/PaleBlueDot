@@ -92,10 +92,16 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
             if (ent.control.up) {
                 ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
                 ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if (ent.resources) {
+                    ent.resources.fuel -= 1;
+                }
             }
             else if (ent.control.down) {
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
                 ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+                if (ent.resources) {
+                    ent.resources.fuel -= 1;
+                }
             }
             else {
                 ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
@@ -182,4 +188,10 @@ export function tiledSpriteSystem(ents: Entity[], camera: Camera) {
             ent.tiledSprite.sprites[3].position.set((tilePos.x + hOff) * ent.tiledSprite.width, (tilePos.y + vOff) * ent.tiledSprite.height, 0);
         }
     });
+}
+
+export function deathCheckSystem(player: Entity, killPlayer: (reason: string) => void) {
+    if (player.resources.fuel <= 0) {
+        killPlayer('Out of fuel!');
+    }
 }

@@ -9,7 +9,8 @@ import {
     timerSystem, 
     animationSystem, 
     velocitySystem, 
-    tiledSpriteSystem
+    tiledSpriteSystem,
+    deathCheckSystem
 } from "./coresystems";
 import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
@@ -25,6 +26,9 @@ import { debrisSystem } from "./debrissystem";
 export class GameState implements State {
     public entities: Entity[];
     public scene: THREE.Scene;
+    public stateStack: State[];
+    public player: Entity;
+    
     public asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.BLUEDEBRIS) {
             if (hittingEnt.resources) {
@@ -50,19 +54,27 @@ export class GameState implements State {
             }
         }
     }
+
+    private onDeath = (reason: string) => {
+        alert('You died! ' + reason);
+        this.stateStack.pop();
+    }
+
     // public rootWidget: BoardhouseUI.Widget;
-    constructor(scene: THREE.Scene){
+    constructor(scene: THREE.Scene, stateStack: State[]){
         this.entities = [];
         this.scene = scene;
+        this.stateStack = stateStack;
         // set up entities
         let player = new Entity();
+        this.player = player;
         player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
         player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
         player.control = initializeControls();
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0 };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800 };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         setHitBoxGraphic(player.sprite, player.hitBox);
 
@@ -99,6 +111,7 @@ export class GameState implements State {
         debrisSystem(this.entities, this.scene, this.asteroidCollide);
         controlSystem(this.entities, camera, stateStack);
         tiledSpriteSystem(this.entities, camera);
+        deathCheckSystem(this.player, this.onDeath);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
