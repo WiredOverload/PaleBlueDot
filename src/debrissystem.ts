@@ -8,19 +8,33 @@ import { asteroidAnim } from "../data/animations/asteroid";
 import { greenAsteroidAnim } from "../data/animations/greenAsteroid";
 import { blueAsteroidAnim } from "../data/animations/blueAsteroid";
 
+interface spawnPoints {
+    xPos: number;
+    yPos: number;
+}
+
 export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide: (hurtingEnt: Entity, hittingEnt: Entity) => void, camera: THREE.Camera) {
     const randomNum = Math.floor(Math.random() * (750 - 0 + 1)) + 0;
+    let spawnPoints: spawnPoints[] = [];
+
+    while (spawnPoints.length < 5) {
+        let xPos = Math.floor(Math.random()*2560) + 1280;
+        let yPos = Math.floor(Math.random()*1440) + 720;
+        xPos *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+        xPos *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+        spawnPoints.push({ xPos: xPos, yPos: yPos });
+    }
     const cameraXPos = 0; // set from camera
     const cameraYPos = 0; // set from camera;
 
-    if (randomNum === 5) {
+    if (randomNum === 5 || randomNum === 632 || randomNum === 633) {
         let asteroid = new Entity();
         let velX = Math.floor(Math.random()*4) + 1;
         let velY = Math.floor(Math.random()*4) + 1;
         velX *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         velY *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 
-        asteroid.pos = { location: new THREE.Vector3(100, 100, 5), direction: new THREE.Vector3(0, 1, 0) };
+        asteroid.pos = { location: new THREE.Vector3(spawnPoints[0].xPos + camera.position.x, spawnPoints[0].yPos + camera.position.y, 5), direction: new THREE.Vector3(0, 1, 0) };
         asteroid.flags |= Flag.HARMFULDEBRIS;
         asteroid.sprite = setSprite("../data/textures/asteroid1.png", scene, 4);
         asteroid.anim = initializeAnimation(SequenceTypes.idle, asteroidAnim);
@@ -32,14 +46,14 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         ents.push(asteroid);
     }
 
-    if (randomNum === 112) {
+    if (randomNum === 112 || randomNum === 224 || randomNum === 225) {
         let redAsteroid = new Entity();
         let velX = Math.floor(Math.random()*4) + 1;
         let velY = Math.floor(Math.random()*4) + 1;
         velX *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         velY *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 
-        redAsteroid.pos = { location: new THREE.Vector3(-250, 175, 4), direction: new THREE.Vector3(0, 1, 0) };
+        redAsteroid.pos = { location: new THREE.Vector3(spawnPoints[1].xPos + camera.position.x, spawnPoints[1].yPos + camera.position.y, 4), direction: new THREE.Vector3(0, 1, 0) };
         redAsteroid.flags |= Flag.REDDEBRIS;
         redAsteroid.sprite = setSprite("../data/textures/redAsteroid1.png", scene, 4);
         redAsteroid.anim = initializeAnimation(SequenceTypes.idle, redAsteroidAnim);
@@ -52,14 +66,14 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         ents.push(redAsteroid);
     }
 
-    if (randomNum === 368) {
+    if (randomNum === 368 || randomNum === 414 || randomNum === 415) {
         let greenAsteroid = new Entity();
         let velX = Math.floor(Math.random()*4) + 1;
         let velY = Math.floor(Math.random()*4) + 1;
         velX *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         velY *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 
-        greenAsteroid.pos = { location: new THREE.Vector3(-200, 125, 4), direction: new THREE.Vector3(0, 1, 0) };
+        greenAsteroid.pos = { location: new THREE.Vector3(spawnPoints[2].xPos + camera.position.x, spawnPoints[2].yPos + camera.position.y, 4), direction: new THREE.Vector3(0, 1, 0) };
         greenAsteroid.flags |= Flag.GREENDEBRIS;
         greenAsteroid.sprite = setSprite("../data/textures/greenAsteroid1.png", scene, 4);
         greenAsteroid.anim = initializeAnimation(SequenceTypes.idle, greenAsteroidAnim);
@@ -72,14 +86,14 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         ents.push(greenAsteroid);
     }
 
-    if (randomNum === 412) {
+    if (randomNum === 412 || randomNum === 700 || randomNum === 713) {
         let velX = Math.floor(Math.random()*4) + 1;
         let velY = Math.floor(Math.random()*4) + 1;
         velX *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         velY *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 
         let blueAsteroid = new Entity();
-        blueAsteroid.pos = { location: new THREE.Vector3(-150, 75, 4), direction: new THREE.Vector3(0, 1, 0) };
+        blueAsteroid.pos = { location: new THREE.Vector3(spawnPoints[3].xPos + camera.position.x, spawnPoints[3].yPos + camera.position.y, 4), direction: new THREE.Vector3(0, 1, 0) };
         blueAsteroid.flags |= Flag.BLUEDEBRIS;
         blueAsteroid.sprite = setSprite("../data/textures/blueAsteroid1.png", scene, 4);
         blueAsteroid.anim = initializeAnimation(SequenceTypes.idle, blueAsteroidAnim);
