@@ -10,7 +10,7 @@ import { Entity } from "./entity";
  * @param scene THREE.Scene.
  * @param pixelRatio Number of pixels to scale texture's height and width by.
  */
-export function setSprite(url: string, scene: THREE.Scene, pixelRatio: number, layers?: number) : THREE.Mesh {
+export function setSprite(url: string, scene: THREE.Scene, pixelRatio: number) : THREE.Mesh {
     // get texture from cached resources
     let spriteMap = Resources.instance.getTexture(url);
     // load geometry (consider caching these as well)
@@ -19,10 +19,6 @@ export function setSprite(url: string, scene: THREE.Scene, pixelRatio: number, l
     spriteMap.magFilter = THREE.NearestFilter;
     var material = new THREE.MeshBasicMaterial( { map: spriteMap, transparent: true });
     var sprite = new THREE.Mesh(geometry, material);
-
-    if (layers) {
-        sprite.layers.mask = layers;
-    }
 
     scene.add(sprite);
 

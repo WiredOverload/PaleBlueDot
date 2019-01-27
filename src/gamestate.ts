@@ -99,6 +99,9 @@ export class GameState implements State {
     private deploy_beacon = (ent: Entity) => {
         if (ent.resources.beacons) {
             ent.resources.beacons -= 1;
+            if (ent.resources.update_beacons) {
+                ent.resources.update_beacons(ent);
+            }
 
             const beacon = new Entity();
             const dir = ent.vel.positional.clone().normalize();
@@ -112,6 +115,19 @@ export class GameState implements State {
             beacon.anim = initializeAnimation(SequenceTypes.idle, beaconAnim);
     
             this.entities.push(beacon);
+        }
+    }
+
+    private update_beacons = (ent: Entity) => {
+        for (let i = 0; i < ent.resources.beacons; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = 20;
+        }
+        for (let i = ent.resources.beacons; i < this.beacon_icons.length; ++i) {
+            const s = this.beacon_icons[i];
+            s.position.x = 20 * i;
+            s.position.y = -200;
         }
     }
 
@@ -129,7 +145,7 @@ export class GameState implements State {
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5 };
+        player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5, update_beacons: this.update_beacons };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
@@ -163,7 +179,13 @@ export class GameState implements State {
         this.ui_scene = new Scene();
         this.ui_camera = new THREE.OrthographicCamera(0, 1280, 720, 0, -1000, 1000);
 
-        const widget = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
+        this.beacon_icons = [];
+        for (let i = 0; i < player.resources.beacons; ++i) {
+            const s = setSprite("../data/textures/beacon.png", this.ui_scene, 1);
+            s.position.x = 20 * i;
+            s.position.y = 20;
+            this.beacon_icons.push(s);
+        }
     }
 
     public update(stateStack: State[]) {
