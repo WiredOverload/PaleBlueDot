@@ -107,6 +107,7 @@ export interface HitByHarmfulDebrisComponent{
 export enum HurtTypes {
     test,
     asteroid,
+    earth,
     // ..
 }
 

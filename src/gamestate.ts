@@ -13,7 +13,7 @@ import {
     deathCheckSystem
 } from "./coresystems";
 import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox, initializeHurtBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
 import { Vector3, Euler, Camera } from "three";
@@ -33,6 +33,7 @@ export class GameState implements State {
     public player: Entity;
 
     public camera: Camera;
+    public earth: Entity;
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
@@ -58,7 +59,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.blue++;
+                    hittingEnt.resources.blue += 100;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("blue: " + hittingEnt.resources.blue);
                 }
@@ -69,7 +70,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.red++;
+                    hittingEnt.resources.red += 100;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("red: " + hittingEnt.resources.red);
                 }
@@ -80,7 +81,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    hittingEnt.resources.green++;
+                    hittingEnt.resources.green += 100;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
                     console.log("green: " + hittingEnt.resources.green);
                 }
@@ -127,13 +128,30 @@ export class GameState implements State {
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         player.resources = { blue: 0, green: 0, red: 0, fuel: 1800, beacons: 5 };
-        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
+        player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid, HurtTypes.earth]);
         player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
 
         let earth = new Entity();
         earth.pos = { location: new Vector3(0, 0, 1), direction: new Vector3(0, 1, 0) };
         earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
+        earth.hurtBox = initializeHurtBox(earth.sprite, HurtTypes.earth, 0, 0, 85, 85);
+        earth.resources = {blue: 1000, red: 1000, green: 1000, fuel: 0, beacons: 0};
+        earth.hurtBox.onHurt = function(hurtingEnt: Entity, hittingEnt: Entity) {
+            if (hittingEnt.resources) {
+                if (Math.abs(0 - Math.abs(hittingEnt.vel.positional.x)) <= .25 &&
+                    Math.abs(0 - Math.abs(hittingEnt.vel.positional.y)) <= .25) {
+                    hittingEnt.resources.fuel = 1800;
+                    hurtingEnt.resources.blue += hittingEnt.resources.blue;
+                    hurtingEnt.resources.green += hittingEnt.resources.green;
+                    hurtingEnt.resources.red += hittingEnt.resources.red;
+
+                    hittingEnt.resources.blue = 0;
+                    hittingEnt.resources.red = 0;
+                    hittingEnt.resources.green = 0;
+                }
+            }
+        }
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
