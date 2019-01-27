@@ -90,6 +90,14 @@ export interface ResourcesComponent {
     green: number;
     red: number;
     fuel: number;
+    beacons: number;
+}
+
+export interface HitByHarmfulDebrisComponent{
+    ticks: number;
+    rotationAcc: number;
+    xAcc: number;
+    yAcc: number;
 }
 
 /**

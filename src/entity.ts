@@ -8,13 +8,15 @@ import {
      TimerComponent,
      TiledSpriteComponent,
      ResourcesComponent,
+     HitByHarmfulDebrisComponent,
 } from "./corecomponents";
 
 export enum Flag {
      REDDEBRIS = 1 << 0,
      BLUEDEBRIS = 1 << 1,
      GREENDEBRIS = 1 << 2,
-     BEACON = 1 << 3,
+     HARMFULDEBRIS = 1 << 3,
+     BEACON = 1 << 4,
 }
 
 /**
@@ -36,4 +38,5 @@ export class Entity {
      public hurtBox: HurtBoxComponent;
      public timer: TimerComponent;
      public tiledSprite: TiledSpriteComponent;
+     public hitByHarmfulDebris: HitByHarmfulDebrisComponent;
 }
