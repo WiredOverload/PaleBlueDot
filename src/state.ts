@@ -17,6 +17,8 @@ export interface State {
 
     camera: THREE.Camera;
 
+    player: Entity;
+
     update(stateStack: State[]);
     
     render(renderer: THREE.WebGLRenderer, camera: THREE.Camera);

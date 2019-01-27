@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 // import { setHitBoxGraphic } from "./helpers";
 import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
-import { changeSequence, destroyEntity } from "./helpers";
+import { changeSequence, destroyEntity, last } from "./helpers";
 import { SequenceTypes } from "./animationschema";
 import { State } from "./state";
 import { GameState } from "./gamestate";
@@ -133,7 +133,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
                 let cameraScene = new THREE.Scene();
                 cameraScene.background = new THREE.Color("#000000");
                 //cameraScene.add(camera);
-                let cameraGameState = new CameraState(cameraScene);
+                let cameraGameState = new CameraState(cameraScene, ent, Math.max(16 - (Math.abs(ent.pos.location.x / 1024) + Math.abs(ent.pos.location.y / 1024)), 0));
                 stateStack.push(cameraGameState);
                 ent.control.camera = false;
             }
@@ -174,9 +174,28 @@ export function cameraControlSystem(ents: Entity[], camera: THREE.Camera, stateS
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
             }
 
+            if(ent.pos.location.x > 1024) {
+                ent.pos.location.x -= 2048;
+            }
+            else if(ent.pos.location.x < -1024) {
+                ent.pos.location.x += 2048;
+            }
+
+            if(ent.pos.location.y > 1024) {
+                ent.pos.location.y -= 2048;
+            }
+            else if(ent.pos.location.y < -1024) {
+                ent.pos.location.y += 2048;
+            }
+
             if(ent.control.camera){
                 //turn logic
-                var xCloseness:number = (ent.pos.location.x % 640) - 1;
+                //var xCloseness:number = (ent.pos.location.x % 512) / 512;
+                //var yCloseness:number = (ent.pos.location.y % 1024) / 1024;
+                //ent.pos.direction = new Vector3(- ent.pos.location.x, - ent.pos.location.y, 0).normalize();
+                //ent.pos.direction.add(new Vector3(1000 * xCloseness, 1000 * yCloseness, 0).normalize());
+                //last(stateStack).player.pos.direction = ent.pos.direction;
+
                 stateStack.pop();
                 ent.control.camera = false;
             }
