@@ -21,10 +21,13 @@ export function debrisSystem(ents: Entity[], scene: THREE.Scene, asteroidCollide
         velY *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 
         asteroid.pos = { location: new THREE.Vector3(100, 100, 5), direction: new THREE.Vector3(0, 1, 0) };
+        asteroid.flags |= Flag.HARMFULDEBRIS;
         asteroid.sprite = setSprite("../data/textures/asteroid1.png", scene, 4);
         asteroid.anim = initializeAnimation(SequenceTypes.idle, asteroidAnim);
+        asteroid.hurtBox = initializeHurtBox(asteroid.sprite, HurtTypes.asteroid, 0, 0, 75, 75);
+        asteroid.hurtBox.onHurt = asteroidCollide;
         asteroid.vel = {positional: new THREE.Vector3(velX, velY, 0), rotational: new THREE.Euler() }
-        asteroid.timer = {ticks: 60 * 20};
+        // asteroid.timer = {ticks: 60 * 20};
 
         ents.push(asteroid);
     }

@@ -19,6 +19,7 @@ import { SequenceTypes } from "./animationschema";
 import { Vector3, Euler } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
+import { hitByHarmfulDebrisSystem } from "./hitbyharmfuldebrissystem";
 
 
 /**
@@ -31,6 +32,25 @@ export class GameState implements State {
     public player: Entity;
     
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
+        if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
+            if (hittingEnt.resources) {
+                hittingEnt.resources.fuel -= 100;
+                destroyEntity(hurtingEnt, this.entities, this.scene);
+
+                let xAcc = Math.floor(Math.random()*4) + 1;
+                let yAcc = Math.floor(Math.random()*4) + 1;
+                let rotAcc = Math.floor(Math.random()*4) + 1;
+                xAcc *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+                yAcc *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+                rotAcc *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+                hittingEnt.hitByHarmfulDebris.rotationAcc = rotAcc * 0.001;
+                hittingEnt.hitByHarmfulDebris.xAcc = xAcc * 0.1;
+                hittingEnt.hitByHarmfulDebris.yAcc = yAcc * 0.1;
+                hittingEnt.hitByHarmfulDebris.ticks = 50;
+                console.log("harmful!!!");
+            }
+        }
+
         if (hurtingEnt.flags & Flag.BLUEDEBRIS) {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
@@ -86,6 +106,7 @@ export class GameState implements State {
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
         player.resources = { blue: 0, green: 0, red: 0, fuel: 1800 };
         player.hitBox = initializeHitBox(player.sprite, [HurtTypes.asteroid]);
+        player.hitByHarmfulDebris = { ticks: 0, xAcc: 0, yAcc: 0, rotationAcc: 0 };
         // setHitBoxGraphic(player.sprite, player.hitBox);
 
         let earth = new Entity();
@@ -125,6 +146,7 @@ export class GameState implements State {
         animationSystem(this.entities);
         timerSystem(this.entities, this.scene);
         debrisSystem(this.entities, this.scene, this.asteroidCollide, camera);
+        hitByHarmfulDebrisSystem(this.entities);
         controlSystem(this.entities, camera, stateStack);
         tiledSpriteSystem(this.entities, camera);
         deathCheckSystem(this.player, this.onDeath);

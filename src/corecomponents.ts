@@ -89,6 +89,13 @@ export interface ResourcesComponent {
     fuel: number;
 }
 
+export interface HitByHarmfulDebrisComponent{
+    ticks: number;
+    rotationAcc: number;
+    xAcc: number;
+    yAcc: number;
+}
+
 /**
  * List of all things that can collide with each other. Naming is arbitrary
  * as long as they are properly set in Hit/Hurt Box "collidesWith" property.
