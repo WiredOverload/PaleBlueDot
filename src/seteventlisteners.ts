@@ -68,7 +68,6 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        console.log("key:", e);
         if (e.key === 'd') {
             last(stateStack).entities.forEach(ent => {
                 if (ent.control) {

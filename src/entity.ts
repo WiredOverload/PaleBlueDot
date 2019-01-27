@@ -6,10 +6,14 @@ import {
      HitBoxComponent,
      HurtBoxComponent,
      TimerComponent,
+     ResourcesComponent,
 } from "./corecomponents";
 
 export enum Flag {
      BACKGROUND = 1 << 0,
+     REDDEBRIS = 1 << 1,
+     BLUEDEBRIS = 1 << 2,
+     GREENDEBRIS = 1 << 3,
 }
 
 /**
@@ -20,6 +24,7 @@ export enum Flag {
  */
 export class Entity {
      public flags: Flag;
+     public resources: ResourcesComponent;
      public pos: PositionComponent;
      public vel: VelocityComponent;
      public sprite: THREE.Mesh;

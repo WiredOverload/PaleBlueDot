@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { Resources } from "./resourcemanager";
 import { AnimationComponent, HurtBoxComponent, HitBoxComponent } from "./corecomponents";
 import { SequenceTypes } from "./animationschema";
+import { Entity } from "./entity";
 
 /**
  * Helper method to add a sprite to the stage.
@@ -180,4 +181,12 @@ export function scaleToWindow(canvas: HTMLCanvasElement): number {
     //5. Return the `scale` value. This is important, because you'll nee this value 
     //for correct hit testing between the pointer and sprites
     return scale;
+}
+
+export function destroyEntity(ent: Entity, ents: Entity[], scene: THREE.Scene) {
+    if (ent.sprite) {
+        scene.remove(ent.sprite);
+    }
+
+    ents.splice(ents.indexOf(ent), 1);
 }
