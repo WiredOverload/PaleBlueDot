@@ -216,9 +216,9 @@ export class GameState implements State {
         }
 
         this.bars = [
-            setSprite("../data/textures/red.png", this.ui_scene, 2),
-            setSprite("../data/textures/green.png", this.ui_scene, 2),
-            setSprite("../data/textures/blue.png", this.ui_scene, 2),
+            setSprite("../data/textures/red.png", this.ui_scene, 1),
+            setSprite("../data/textures/green.png", this.ui_scene, 1),
+            setSprite("../data/textures/blue.png", this.ui_scene, 1),
         ];
 
         this.bars[0].position.set(32, 720-32, 0);
