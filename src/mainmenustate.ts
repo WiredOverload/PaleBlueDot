@@ -9,6 +9,7 @@ import { Entity } from "./entity";
  */
 export class MainMenuState implements State {
     public entities: Entity[];
+    public scene;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(stateStack: State[]) { //stage: PIXI.Container) {
         this.entities = [];
@@ -56,7 +57,7 @@ export class MainMenuState implements State {
         // ...
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera, scene: THREE.Scene) {
+    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }
 }

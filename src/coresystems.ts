@@ -5,6 +5,9 @@ import { HurtTypes } from "./corecomponents";
 import { Resources } from "./resourcemanager";
 import { changeSequence } from "./helpers";
 import { SequenceTypes } from "./animationschema";
+import { State } from "./state";
+import { GameState } from "./gamestate";
+import { CameraState } from "./camerastate";
 
 /**
  * Rudimentary velocity implementation... will replace directions with
@@ -61,9 +64,9 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
     });
 }
 
-export function controlSystem(ents: Entity[], camera: THREE.Camera) {
+export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: State[]) {
     ents.forEach(ent => {
-        if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
+        if (ent.control !== undefined) {
             if (ent.control.left) {
                 ent.vel.rotationVelocity += Math.PI/32;
                 camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
@@ -92,6 +95,23 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
                 //camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI/32);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+            }
+
+            if(ent.control.camera){
+                if(stateStack.length < 2) {
+                    let cameraScene = new THREE.Scene();
+                    cameraScene.background = new THREE.Color("#FFFFFF");
+                    //const renderer = new THREE.WebGLRenderer();
+                    //renderer.setSize(1280, 720);
+                    //const rendererSize = renderer.getSize();
+                    const camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+                    cameraScene.add(camera);
+                    let cameraGameState = new CameraState(cameraScene);
+                    stateStack.push(cameraGameState);
+                }
+                else {
+                    stateStack.pop();
+                }
             }
         }
     });

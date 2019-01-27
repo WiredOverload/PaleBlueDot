@@ -11,38 +11,26 @@ import {
     velocitySystem 
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox} from "./corecomponents";
-import { playerAnim } from "../data/animations/player";
-import { SequenceTypes } from "./animationschema";
+
 
 
 /**
  * GameState that handles updating of all game-related systems.
  */
-export class GameState implements State {
+export class CameraState implements State {
     public entities: Entity[];
     public scene: THREE.Scene;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene){
         this.entities = [];
         this.scene = scene;
-        // set up entities
-        let player = new Entity();
-        player.pos = { x: -100, y: -100, z: 5 , angle: 0};
-        player.sprite = setSprite("../data/textures/msknight.png", scene, 4);
-        player.control = initializeControls();
-        player.vel = { xVelocity: 0, yVelocity: 0, rotationVelocity: 0 };
-        player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
-        player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        setHurtBoxGraphic(player.sprite, player.hurtBox);
 
         let background = new Entity();
-        background.pos = {x: 0, y: 0, z: 0, angle: 0};
-        background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
+        background.pos = {x: 0, y: 0, z: 10, angle: 0};
+        background.sprite = setSprite("../data/textures/cottage.png", scene, 2);
         //add componant to render multiple times / teleport to wrap
-        this.entities.push(player);
         this.entities.push(background);
-         // this.rootWidget = new BoardhouseUI.Widget();
+        // this.rootWidget = new BoardhouseUI.Widget();
     }
 
     public update(camera: THREE.Camera, stateStack: State[]) {

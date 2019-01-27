@@ -76,7 +76,10 @@ function main(canvasContainer: HTMLElement) {
     setInterval(function (): void {
         if (stateStack.length > 0) {
             // call update on last element in state stack
-            last(stateStack).update(camera);
+            if(last(stateStack).entities.length < 1) {
+                
+            }
+            last(stateStack).update(camera, stateStack);
         }
         else {
             throw "No states to update";
@@ -96,7 +99,7 @@ function main(canvasContainer: HTMLElement) {
                 
         if (stateStack.length > 0) {
             // call render on last element in state stack
-            last(stateStack).render(renderer, camera, scene);
+            last(stateStack).render(renderer, camera);
         }
         else {
             throw "No states to render";

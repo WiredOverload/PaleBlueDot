@@ -59,15 +59,6 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
                 }
             });
         }
-
-        if (e.keyCode === 40) {
-            // handle ui events first then pass to controls
-            last(stateStack).entities.forEach(ent=> {
-                if (ent.control !== undefined) {
-                    ent.control.camera = true;
-                }
-            });
-        }
     }
 
     window.onkeyup = function(e) {
@@ -106,11 +97,16 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 40) {
+        if (e.keyCode === 32) {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
-                    ent.control.camera = false;
+                    if(ent.control.camera) {
+                        ent.control.camera = false;
+                    }
+                    else {
+                        ent.control.camera = true;
+                    }
                 }
             });
         }
