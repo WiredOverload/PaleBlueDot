@@ -11,6 +11,7 @@ import { Entity } from "./entity";
  * @param pixelRatio Number of pixels to scale texture's height and width by.
  */
 export function setSprite(url: string, scene: THREE.Scene, pixelRatio: number) : THREE.Mesh {
+    url = url.substr(1);
     // get texture from cached resources
     let spriteMap = Resources.instance.getTexture(url);
     // load geometry (consider caching these as well)
