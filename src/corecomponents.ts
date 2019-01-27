@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { SequenceTypes, AnimationSchema } from "./animationschema";
 import { Mesh } from "three";
+import { Entity } from "./entity";
 
 /**
  * Position component.
@@ -41,7 +42,7 @@ export interface HitBoxComponent {
     collidesWith: HurtTypes[];
     height: number;
     width: number;
-    onHit?: () => void;
+    onHit?: (hittingEnt: Entity, hurtingEnt: Entity) => void;
 }
 
 /**
@@ -53,7 +54,7 @@ export interface HurtBoxComponent {
     // collidesWith: Collidables[];
     height: number;
     width: number;
-    onHurt?: () => void;
+    onHurt?: (hurtingEnt: Entity, hittingEnt: Entity) => void;
 }
 
 /**
@@ -81,12 +82,19 @@ export interface TiledSpriteComponent {
     height: number;
 }
 
+export interface ResourcesComponent {
+    blue: number;
+    green: number;
+    red: number;
+}
+
 /**
  * List of all things that can collide with each other. Naming is arbitrary
  * as long as they are properly set in Hit/Hurt Box "collidesWith" property.
  */
 export enum HurtTypes {
     test,
+    asteroid,
     // ..
 }
 
@@ -138,12 +146,12 @@ export function initializeHurtBox(entMesh: THREE.Mesh, hurtType: HurtTypes, offS
     let hurtBox: HurtBoxComponent = { type: hurtType, height: 0, width: 0 };
 
     if (manualHeight !== undefined && manualWidth !== undefined) {
-        hurtBox.height = manualHeight - offSetY;
+        hurtBox.height = manualHeight + offSetY;
         hurtBox.width = manualWidth + offSetX;
     }
     else {
         const boundingBox = new THREE.Box3().setFromObject(entMesh);
-        hurtBox.height = boundingBox.max.y - boundingBox.min.y - offSetY;
+        hurtBox.height = boundingBox.max.y - boundingBox.min.y + offSetY;
         hurtBox.width =  boundingBox.max.x - boundingBox.min.x + offSetX;
     }
 

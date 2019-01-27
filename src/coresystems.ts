@@ -44,16 +44,16 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
             ents.forEach(hurtingEnt => {
                 if (hurtingEnt.hurtBox && hurtingEnt.pos) {
                     if (hittingEnt.hitBox.collidesWith.indexOf(hurtingEnt.hurtBox.type) > -1) {
-                        if (hittingEnt.pos.location.x + hittingEnt.hitBox.width / 2 < hurtingEnt.pos.location.x + hurtingEnt.hurtBox.width &&
-                            hittingEnt.pos.location.x + hittingEnt.hitBox.width + hittingEnt.hitBox.width / 2 > hurtingEnt.pos.location.x &&
-                            hittingEnt.pos.location.y + hittingEnt.hitBox.height / 2 < hurtingEnt.pos.location.y + hurtingEnt.hurtBox.height &&
-                            hittingEnt.pos.location.y + hittingEnt.hitBox.height + hittingEnt.hitBox.height / 2 > hurtingEnt.pos.location.y) {
+                        if (hittingEnt.pos.location.x - hittingEnt.hitBox.width / 2 < hurtingEnt.pos.location.x + hurtingEnt.hurtBox.width/2 &&
+                            hittingEnt.pos.location.x + hittingEnt.hitBox.width / 2 > hurtingEnt.pos.location.x - hurtingEnt.hurtBox.width/2 &&
+                            hittingEnt.pos.location.y - hittingEnt.hitBox.height / 2 < hurtingEnt.pos.location.y + hurtingEnt.hurtBox.height/2 &&
+                            hittingEnt.pos.location.y + hittingEnt.hitBox.height / 2 > hurtingEnt.pos.location.y - hurtingEnt.hurtBox.height/2) {
                             if (hittingEnt.hitBox.onHit) {
-                                hittingEnt.hitBox.onHit();
+                                hittingEnt.hitBox.onHit(hittingEnt, hurtingEnt);
                             }
 
                             if (hurtingEnt.hurtBox.onHurt) {
-                                hurtingEnt.hurtBox.onHurt();
+                                hurtingEnt.hurtBox.onHurt(hurtingEnt, hittingEnt);
                             }
                         }
                     }

@@ -24,7 +24,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
 
     // keyboard controls
     window.onkeydown = function(e: KeyboardEvent) {
-        if (e.keyCode === 37) {
+        if (e.keyCode === 37 || e.key === 'q') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -33,7 +33,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 39) {
+        if (e.keyCode === 39 || e.key === 'e') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -42,7 +42,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 38) {
+        if (e.keyCode === 38 || e.key === 'w') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -51,7 +51,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 40) {
+        if (e.keyCode === 40 || e.key === 's') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -68,7 +68,6 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        console.log("key:", e);
         if (e.key === 'd') {
             last(stateStack).entities.forEach(ent => {
                 if (ent.control) {
@@ -79,7 +78,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
     }
 
     window.onkeyup = function(e) {
-        if (e.keyCode === 37) {
+        if (e.keyCode === 37 || e.key === 'q') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -87,7 +86,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
                 }
             });
         }
-        if (e.keyCode === 39) {
+        if (e.keyCode === 39 || e.key === 'e') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -96,7 +95,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 38) {
+        if (e.keyCode === 38 || e.key === 'w') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
@@ -105,7 +104,7 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             });
         }
 
-        if (e.keyCode === 40) {
+        if (e.keyCode === 40 || e.key === 's') {
             // handle ui events first then pass to controls
             last(stateStack).entities.forEach(ent=> {
                 if (ent.control !== undefined) {
