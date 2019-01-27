@@ -23,6 +23,8 @@ import { initializeControls } from "./corecomponents";
 export class CameraState implements State {
     public entities: Entity[];
     public scene: THREE.Scene;
+
+    public camera: THREE.Camera;
     // public rootWidget: BoardhouseUI.Widget;
     constructor(scene: THREE.Scene){
         this.entities = [];
@@ -50,26 +52,28 @@ export class CameraState implements State {
         earth.sprite = setSprite("../data/textures/earth.png", scene, .5);
         this.entities.push(earth);
 
+        this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+        scene.add(this.camera);
         //add componant to render multiple times / teleport to wrap
         
         // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(camera: THREE.Camera, stateStack: State[]) {
+    public update(stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
         
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities, this.scene);
-        cameraControlSystem(this.entities, camera, stateStack);
+        cameraControlSystem(this.entities, this.camera, stateStack);
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+    public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
         renderer.clear();
-        renderer.render(this.scene, camera);
+        renderer.render(this.scene, this.camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }

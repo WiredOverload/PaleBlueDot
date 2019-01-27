@@ -124,7 +124,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
             if(ent.control.camera){
                 let cameraScene = new THREE.Scene();
                 cameraScene.background = new THREE.Color("#000000");
-                cameraScene.add(camera);
+                //cameraScene.add(camera);
                 let cameraGameState = new CameraState(cameraScene);
                 stateStack.push(cameraGameState);
                 ent.control.camera = false;
@@ -167,6 +167,8 @@ export function cameraControlSystem(ents: Entity[], camera: THREE.Camera, stateS
             }
 
             if(ent.control.camera){
+                //turn logic
+                var xCloseness:number = (ent.pos.location.x % 640) - 1;
                 stateStack.pop();
                 ent.control.camera = false;
             }

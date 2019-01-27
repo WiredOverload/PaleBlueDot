@@ -16,7 +16,7 @@ import { setSprite, setHitBoxGraphic, destroyEntity } from "./helpers";
 import { initializeControls, HurtTypes, initializeAnimation, initializeHitBox } from "./corecomponents";
 import { spaceshipAnim } from "../data/animations/spaceship";
 import { SequenceTypes } from "./animationschema";
-import { Vector3, Euler } from "three";
+import { Vector3, Euler, Camera } from "three";
 import { debrisSystem } from "./debrissystem";
 import { beaconAnim } from "../data/animations/beacon";
 
@@ -29,6 +29,8 @@ export class GameState implements State {
     public scene: THREE.Scene;
     public stateStack: State[];
     public player: Entity;
+
+    public camera: Camera;
     
     public asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.BLUEDEBRIS) {
@@ -106,26 +108,29 @@ export class GameState implements State {
         this.entities.push(earth);
         this.entities.push(beacon);
         this.entities.push(background);
+
+        this.camera = new THREE.OrthographicCamera(1280 / - 2, 1280 / 2, 720 / 2, 720 / -2, -1000, 1000);
+        scene.add(this.camera);
          // this.rootWidget = new BoardhouseUI.Widget();
     }
 
-    public update(camera: THREE.Camera, stateStack: State[]) {
+    public update(stateStack: State[]) {
         // pull in all system free functions and call each in the proper order
         velocitySystem(this.entities);
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities, this.scene);
-        debrisSystem(this.entities, this.scene, this.asteroidCollide, camera);
-        controlSystem(this.entities, camera, stateStack);
-        tiledSpriteSystem(this.entities, camera);
+        debrisSystem(this.entities, this.scene, this.asteroidCollide, this.camera);
+        controlSystem(this.entities, this.camera, stateStack);
+        tiledSpriteSystem(this.entities, this.camera);
         deathCheckSystem(this.player, this.onDeath);
     }
 
-    public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+    public render(renderer: THREE.WebGLRenderer) {
         positionSystem(this.entities);
 
         renderer.clear();
-        renderer.render(this.scene, camera);
+        renderer.render(this.scene, this.camera);
         // check if children needs to be reconciled, then do so
         // BoardhouseUI.ReconcilePixiDom(this.rootWidget, stage);
     }
