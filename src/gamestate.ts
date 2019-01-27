@@ -58,15 +58,21 @@ export class GameState implements State {
         blueAsteroid.sprite = setSprite("../data/textures/blueAsteroid1.png", scene, 4);
         blueAsteroid.anim = initializeAnimation(SequenceTypes.idle, blueAsteroidAnim);
 
+        let earth = new Entity();
+        earth.pos = { x: 0, y: 0, z: 1, angle: 0 }
+        earth.sprite = setSprite("../data/textures/earth.png", scene, 4);
+
         let background = new Entity();
         background.pos = {x: 0, y: 0, z: 0, angle: 0};
         background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
+        
         //add componant to render multiple times / teleport to wrap
         this.entities.push(player);
         this.entities.push(asteroid);
         this.entities.push(blueAsteroid);
         this.entities.push(redAsteroid);
         this.entities.push(greenAsteroid);
+        this.entities.push(earth);
         this.entities.push(background);
 
         // this.rootWidget = new BoardhouseUI.Widget();
