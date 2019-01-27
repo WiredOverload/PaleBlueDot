@@ -17,6 +17,9 @@ import { Quaternion, Vector3, Euler, Camera } from "three";
 export function velocitySystem(ents: Readonly<Entity>[]) : void {
     ents.forEach(ent => { 
         if (ent.vel && ent.pos) {
+            if (ent.vel.friction) {
+                ent.vel.positional.multiplyScalar(ent.vel.friction);
+            }
             ent.pos.location.add(ent.vel.positional);
             ent.pos.direction.applyEuler(ent.vel.rotational);
         }
@@ -73,6 +76,11 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
         if (ent.control && ent.vel && ent.pos) {
             camera.position.copy(ent.pos.location).add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(360 - 64));
             camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
+
+            if (ent.control.beacon) {
+                ent.control.beacon = false;
+                ent.control.deploy_beacon(ent);
+            }
 
             if (ent.control.left) {
                 ent.vel.rotational.z += rotAccel;

@@ -14,6 +14,7 @@ export enum Flag {
      REDDEBRIS = 1 << 0,
      BLUEDEBRIS = 1 << 1,
      GREENDEBRIS = 1 << 2,
+     BEACON = 1 << 3,
 }
 
 /**

@@ -18,6 +18,7 @@ export interface PositionComponent {
 export interface VelocityComponent {
     positional: THREE.Vector3;
     rotational: THREE.Euler;
+    friction?: number;
 }
 
 /**
@@ -31,6 +32,8 @@ export interface ControllableComponent {
     camera: boolean;
     strafeleft: boolean;
     straferight: boolean;
+    beacon: boolean;
+    deploy_beacon: (ent: Entity) => void;
 }
 
 /**
@@ -103,7 +106,7 @@ export enum HurtTypes {
  * Free function to initialize ControllableComponent to maintain invariance
  * at creation of the object.
  */
-export function initializeControls(): ControllableComponent {
+export function initializeControls(deploy_beacon: (ent: Entity) => void): ControllableComponent {
     return {
         up: false,
         down: false,
@@ -112,6 +115,8 @@ export function initializeControls(): ControllableComponent {
         camera: false,
         strafeleft: false,
         straferight: false,
+        beacon: false,
+        deploy_beacon: deploy_beacon,
     };
 }
 

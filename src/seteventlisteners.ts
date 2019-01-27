@@ -2,6 +2,7 @@ import { scaleToWindow } from "./helpers";
 // import { BoardhouseUI } from "./boardhouseui";
 import { State } from "./state";
 import { last } from "./helpers";
+import { Entity } from "./entity";
 // type Widget = BoardhouseUI.Widget;
 
 export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]) {
@@ -75,6 +76,14 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
                 }
             });
         }
+
+        if (e.code === 'Enter') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.beacon = true;
+                }
+            });
+        }
     }
 
     window.onkeyup = function(e) {
@@ -138,6 +147,14 @@ export function setEventListeners(canvas: HTMLCanvasElement, stateStack: State[]
             last(stateStack).entities.forEach(ent => {
                 if (ent.control) {
                     ent.control.straferight = false;
+                }
+            });
+        }
+
+        if (e.code === 'Enter') {
+            last(stateStack).entities.forEach(ent => {
+                if (ent.control) {
+                    ent.control.beacon = false;
                 }
             });
         }
