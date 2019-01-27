@@ -10,9 +10,13 @@ import {
     animationSystem, 
     velocitySystem 
 } from "./coresystems";
-import { setSprite, setHurtBoxGraphic } from "./helpers";
-import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox } from "./corecomponents";
-import { playerAnim } from "../data/animations/player";
+import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
+import { initializeControls, HurtTypes, initializeAnimation, initializeHurtBox, initializeHitBox } from "./corecomponents";
+import { spaceshipAnim } from "../data/animations/spaceship";
+import { asteroidAnim } from "../data/animations/asteroid";
+import { redAsteroidAnim } from "../data/animations/redAsteroid";
+import { greenAsteroidAnim } from "../data/animations/greenAsteroid";
+import { blueAsteroidAnim } from "../data/animations/blueAsteroid";
 import { SequenceTypes } from "./animationschema";
 import { Vector3, Quaternion, Euler } from "three";
 
@@ -27,20 +31,43 @@ export class GameState implements State {
         this.entities = [];
         // set up entities
         let player = new Entity();
-        player.pos = { location: new Vector3(-100, -100, 5), direction: new Vector3(0, 1, 0)};
-        player.sprite = setSprite("../data/textures/msknight.png", scene, 4);
+        player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
+        player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
         player.control = initializeControls();
         player.vel = { positional: new Vector3(), rotational: new Euler() };
-        player.anim = initializeAnimation(SequenceTypes.walk, playerAnim);
+        player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);
-        setHurtBoxGraphic(player.sprite, player.hurtBox);
-        
-        this.entities.push(player);
+        // setHurtBoxGraphic(player.sprite, player.hurtBox);
+
+        let asteroid = new Entity();
+        asteroid.pos = { location: new Vector3(100, 100, 5), direction: new Vector3(0, 1, 0) };
+        asteroid.sprite = setSprite("../data/textures/asteroid1.png", scene, 4);
+        asteroid.anim = initializeAnimation(SequenceTypes.idle, asteroidAnim);
+
+        let redAsteroid = new Entity();
+        redAsteroid.pos = { location: new Vector3(-250, 175, 4), direction: new Vector3(0, 1, 0) };
+        redAsteroid.sprite = setSprite("../data/textures/redAsteroid1.png", scene, 4);
+        redAsteroid.anim = initializeAnimation(SequenceTypes.idle, redAsteroidAnim);
+
+        let greenAsteroid = new Entity();
+        greenAsteroid.pos = { location: new Vector3(-200, 125, 4), direction: new Vector3(0, 1, 0) };
+        greenAsteroid.sprite = setSprite("../data/textures/greenAsteroid1.png", scene, 4);
+        greenAsteroid.anim = initializeAnimation(SequenceTypes.idle, greenAsteroidAnim);
+
+        let blueAsteroid = new Entity();
+        blueAsteroid.pos = { location: new Vector3(-150, 75, 4), direction: new Vector3(0, 1, 0) };
+        blueAsteroid.sprite = setSprite("../data/textures/blueAsteroid1.png", scene, 4);
+        blueAsteroid.anim = initializeAnimation(SequenceTypes.idle, blueAsteroidAnim);
 
         let background = new Entity();
         background.pos = { location: new Vector3(), direction: new Vector3(0, 1, 0) };
         background.sprite = setSprite("../data/textures/space4096.png", scene, 2);
         //add componant to render multiple times / teleport to wrap
+        this.entities.push(player);
+        this.entities.push(asteroid);
+        this.entities.push(blueAsteroid);
+        this.entities.push(redAsteroid);
+        this.entities.push(greenAsteroid);
         this.entities.push(background);
 
         // this.rootWidget = new BoardhouseUI.Widget();

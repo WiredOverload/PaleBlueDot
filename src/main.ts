@@ -26,6 +26,20 @@ loadTextures([
     "../data/textures/msknight.png",
     "../data/textures/snow.png",
     "../data/textures/space4096.png",
+    "../data/textures/asteroid1.png",
+    "../data/textures/asteroid2.png",
+    "../data/textures/asteroid3.png",
+    "../data/textures/blueAsteroid1.png",
+    "../data/textures/blueAsteroid2.png",
+    "../data/textures/blueAsteroid3.png",
+    "../data/textures/greenAsteroid1.png",
+    "../data/textures/greenAsteroid2.png",
+    "../data/textures/greenAsteroid3.png",
+    "../data/textures/redAsteroid1.png",
+    "../data/textures/redAsteroid2.png",
+    "../data/textures/redAsteroid3.png",
+    "../data/textures/spaceshipidle.png",
+    "../data/textures/spaceshipmove.png",
 ]).then((textures) => {
     // cache off textures
     Resources.instance.textures = textures;

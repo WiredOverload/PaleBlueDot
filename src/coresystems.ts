@@ -20,7 +20,7 @@ export function velocitySystem(ents: Readonly<Entity>[]) : void {
     });
 }
 
-export function animationSystem(ents: Readonly<Entity>[]) : void {
+export function animationSystem(ents: Readonly<Entity>[]): void {
     ents.forEach(ent => {
         if (ent.anim && ent.sprite) {
             ent.anim.ticks--;
@@ -41,13 +41,17 @@ export function collisionSystem(ents: Readonly<Entity>[]) {
             ents.forEach(hurtingEnt => {
                 if (hurtingEnt.hurtBox && hurtingEnt.pos) {
                     if (hittingEnt.hitBox.collidesWith.indexOf(hurtingEnt.hurtBox.type) > -1) {
-                        if (hittingEnt.pos.location.x < hurtingEnt.pos.location.x + hurtingEnt.hurtBox.width &&
-                            hittingEnt.pos.location.x + hittingEnt.hitBox.width > hurtingEnt.pos.location.x &&
-                            hittingEnt.pos.location.y < hurtingEnt.pos.location.y + hurtingEnt.hurtBox.height &&
-                            hittingEnt.hitBox.height + hittingEnt.pos.location.y > hurtingEnt.pos.location.y)
-                        {
-                            hittingEnt.hitBox.onHit();
-                            hurtingEnt.hurtBox.onHurt();
+                        if (hittingEnt.pos.location.x + hittingEnt.hitBox.width / 2 < hurtingEnt.pos.location.x + hurtingEnt.hurtBox.width &&
+                            hittingEnt.pos.location.x + hittingEnt.hitBox.width + hittingEnt.hitBox.width / 2 > hurtingEnt.pos.location.x &&
+                            hittingEnt.pos.location.y + hittingEnt.hitBox.height / 2 < hurtingEnt.pos.location.y + hurtingEnt.hurtBox.height &&
+                            hittingEnt.pos.location.y + hittingEnt.hitBox.height + hittingEnt.hitBox.height / 2 > hurtingEnt.pos.location.y) {
+                            if (hittingEnt.hitBox.onHit) {
+                                hittingEnt.hitBox.onHit();
+                            }
+
+                            if (hurtingEnt.hurtBox.onHurt) {
+                                hurtingEnt.hurtBox.onHurt();
+                            }
                         }
                     }
                 }
@@ -69,20 +73,21 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
 
             if (ent.control.left) {
                 ent.vel.rotational.z += rotAccel;
-                ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
             else if (ent.control.right) {
                 ent.vel.rotational.z -= rotAccel;
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
             }
 
             if (ent.control.up) {
                 ent.vel.positional.add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(posAccel));
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
             }
             else if (ent.control.down) {
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
-                ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
+                ent.anim = changeSequence(SequenceTypes.move, ent.anim);
+            }
+            else {
+                ent.anim = changeSequence(SequenceTypes.idle, ent.anim);
             }
 
             if (ent.vel.positional.length() > maxPosVel) {
