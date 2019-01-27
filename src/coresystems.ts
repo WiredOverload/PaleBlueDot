@@ -68,7 +68,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
 
     ents.forEach(ent => {
         if (ent.control && ent.vel && ent.pos) {
-            camera.position.copy(ent.pos.location);
+            camera.position.copy(ent.pos.location).add(new Vector3(-ent.pos.direction.y, ent.pos.direction.x, ent.pos.direction.z).multiplyScalar(360 - 64));
             camera.setRotationFromAxisAngle(new Vector3(0, 0, 1), Math.atan2(ent.pos.direction.y, ent.pos.direction.x));
 
             if (ent.control.left) {
