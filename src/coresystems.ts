@@ -65,14 +65,14 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera) {
     ents.forEach(ent => {
         if (ent.control !== undefined && ent.vel !== undefined && ent.pos !== undefined) {
             if (ent.control.left) {
-                ent.vel.rotationVelocity += Math.PI/32;
+                ent.vel.rotationVelocity += Math.PI/1000;
                 camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.attack, ent.anim);
             }
             else if (ent.control.right) {
                 //ent.vel.xVelocity += .05;
-                ent.vel.rotationVelocity -= Math.PI/32;
+                ent.vel.rotationVelocity -= Math.PI/1000;
                 camera.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), ent.pos.angle);
                 // test change seq
                 ent.anim = changeSequence(SequenceTypes.walk, ent.anim);
