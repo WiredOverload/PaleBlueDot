@@ -33,6 +33,7 @@ export interface ControllableComponent {
     strafeleft: boolean;
     straferight: boolean;
     beacon: boolean;
+    music?: boolean;
     deploy_beacon: (ent: Entity) => void;
 }
 

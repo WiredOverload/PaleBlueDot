@@ -92,9 +92,6 @@ function main(canvasContainer: HTMLElement) {
     // let fpsWidget = BoardhouseUI.CreateWidget();
     // fpsWidget.setText("FPS:");
 
-    var audio = new Audio('../data/audio/Pale_Blue.mp3');
-    audio.loop = true;
-    audio.play();
 
     // set up event listeners
     setEventListeners(renderer.domElement, stateStack);

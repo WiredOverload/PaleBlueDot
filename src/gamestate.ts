@@ -43,7 +43,7 @@ export class GameState implements State {
     private asteroidCollide = (hurtingEnt: Entity, hittingEnt: Entity) => {
         if (hurtingEnt.flags & Flag.HARMFULDEBRIS) {
             if (hittingEnt.resources) {
-                var audio = new Audio('../data/audio/hitwith_debris.wav');
+                var audio = new Audio('./data/audio/hitwith_debris.wav');
                 audio.play();
                 hittingEnt.resources.fuel -= 100;
                 destroyEntity(hurtingEnt, this.entities, this.scene);
@@ -66,7 +66,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    var audio = new Audio('./data/audio/hitwith_debris.wav');
                     audio.play();
                     hittingEnt.resources.blue += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
@@ -79,7 +79,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    var audio = new Audio('./data/audio/hitwith_debris.wav');
                     audio.play();
                     hittingEnt.resources.red += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
@@ -92,7 +92,7 @@ export class GameState implements State {
             if (hittingEnt.resources) {
                 if (Math.abs((Math.abs(hurtingEnt.vel.positional.x) - Math.abs(hittingEnt.vel.positional.x))) <= .25 &&
                     Math.abs((Math.abs(hurtingEnt.vel.positional.y) - Math.abs(hittingEnt.vel.positional.y))) <= .25) {
-                    var audio = new Audio('../data/audio/hitwith_debris.wav');
+                    var audio = new Audio('./data/audio/hitwith_debris.wav');
                     audio.play();
                     hittingEnt.resources.green += 500;
                     destroyEntity(hurtingEnt, this.entities, this.scene);
@@ -163,6 +163,7 @@ export class GameState implements State {
         player.pos = { location: new Vector3(100, -100, 5), direction: new Vector3(0, 1, 0)};
         player.sprite = setSprite("../data/textures/spaceshipidle.png", scene, 4);
         player.control = initializeControls(this.deploy_beacon);
+        player.control.music = false;
         player.vel = { positional: new Vector3(), rotational: new Euler() };
         player.anim = initializeAnimation(SequenceTypes.idle, spaceshipAnim);
         // player.hurtBox = initializeHurtBox(player.sprite, HurtTypes.test);

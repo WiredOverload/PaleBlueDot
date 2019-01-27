@@ -103,6 +103,12 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
                 if (ent.resources) {
                     ent.resources.fuel -= 1;
                 }
+                if (!ent.control.music) {
+                    var audio = new Audio('./data/audio/Pale_Blue.mp3');
+                    audio.loop = true;
+                    audio.play();
+                    ent.control.music = true;
+                }
             }
             else if (ent.control.down) {
                 ent.vel.positional.add(new Vector3(ent.pos.direction.y, -ent.pos.direction.x, -ent.pos.direction.z).multiplyScalar(posAccel));
@@ -130,7 +136,7 @@ export function controlSystem(ents: Entity[], camera: THREE.Camera, stateStack: 
             }
 
             if(ent.control.camera){
-                var audio = new Audio('../data/audio/clickOpen.wav');
+                var audio = new Audio('./data/audio/clickOpen.wav');
                 audio.play();
                 let cameraScene = new THREE.Scene();
                 cameraScene.background = new THREE.Color("#000000");
