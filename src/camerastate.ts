@@ -8,7 +8,8 @@ import {
     collisionSystem, 
     timerSystem, 
     animationSystem, 
-    velocitySystem 
+    velocitySystem, 
+    cameraControlSystem
 } from "./coresystems";
 import { setSprite, setHurtBoxGraphic, setHitBoxGraphic } from "./helpers";
 import { Vector3, Euler } from "three";
@@ -61,7 +62,7 @@ export class CameraState implements State {
         collisionSystem(this.entities);
         animationSystem(this.entities);
         timerSystem(this.entities);
-        controlSystem(this.entities, camera, stateStack);
+        cameraControlSystem(this.entities, camera, stateStack);
     }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
